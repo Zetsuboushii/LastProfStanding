@@ -3,7 +3,16 @@
  */
 package lastprofstanding
 
+import javafx.application.Application
+import javafx.event.EventHandler
+import javafx.scene.Scene
+import javafx.scene.control.Button
+import javafx.scene.layout.HBox
+import javafx.scene.layout.VBox
+import javafx.scene.text.Text
+import javafx.stage.Stage
 import lastprofstanding.engine.Engine
+import lastprofstanding.engine.EngineState
 import lastprofstanding.engine.Level
 import lastprofstanding.engine.SimulationSpeed
 import lastprofstanding.engine.grid.*
@@ -20,22 +29,62 @@ class MyCell : Cell(true), InteractiveCell<MyCell> {
     override val icon: Int = 5
     override val textRepresentation = "M"
 }
-class App {
-    companion object {
-        fun main() {
-           val engine = Engine.getInstance()
-            engine.load(Level.BASIC)
-            engine.startSimulation({ grid, stats ->
-                println(grid.getTextRepresentation())
-                println(stats)
-                if (stats.timeSpentPlaying >= 30) {
-                    engine.stopSimulation()
-                }
-            }, SimulationSpeed.X1)
+
+class App : Application() {
+    private var engine = Engine.getInstance()
+    private lateinit var textField: Text
+    private lateinit var stopSimulationBtn: Button
+    private lateinit var startSimulationBtn: Button
+    private lateinit var resetGridBtn: Button
+
+    override fun start(primaryStage: Stage) {
+        primaryStage.title = "Last Prof. Standing"
+
+        textField = Text()
+
+        stopSimulationBtn = Button("Stop simulation")
+        stopSimulationBtn.onAction = EventHandler { stopSimulation() }
+
+        startSimulationBtn = Button("Start simulation")
+        startSimulationBtn.onAction = EventHandler { startSimulation() }
+
+        resetGridBtn = Button("Reset grid")
+        resetGridBtn.onAction = EventHandler { resetGrid() }
+
+        val controlBar = HBox()
+        controlBar.children.add(stopSimulationBtn)
+        controlBar.children.add(startSimulationBtn)
+        controlBar.children.add(resetGridBtn)
+
+        val root = VBox()
+        root.children.add(controlBar)
+        root.children.add(textField)
+        primaryStage.scene = Scene(root, 500.0, 500.0)
+        primaryStage.show()
+
+        resetGrid()
+    }
+
+    private fun resetGrid() {
+        engine.load(Level.BASIC)
+        updateUIWithState(engine.state)
+    }
+
+    private fun startSimulation() {
+        engine.startSimulation(SimulationSpeed.X1) { state ->
+            updateUIWithState(state)
         }
+    }
+
+    private fun updateUIWithState(state: EngineState) {
+        textField.text = "${state.stats}\n${state.grid.getTextRepresentation()}"
+    }
+
+    private fun stopSimulation() {
+        engine.stopSimulation()
     }
 }
 
 fun main() {
-    App.main()
+    Application.launch(App::class.java)
 }
