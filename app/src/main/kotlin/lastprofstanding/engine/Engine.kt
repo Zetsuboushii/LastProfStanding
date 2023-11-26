@@ -19,7 +19,7 @@ class Engine private constructor() {
          * @param speed the speed setting of the simulation
          */
         private fun getSleepInterval(stepTime: Float, speed: SimulationSpeed): Float {
-            val divisor = when(speed) {
+            val divisor = when (speed) {
                 SimulationSpeed.PAUSED -> throw Exception("Simulation paused. It makes no sense to get a sleep interval.")
                 SimulationSpeed.X1 -> 1
                 SimulationSpeed.X2 -> 2
@@ -32,16 +32,21 @@ class Engine private constructor() {
 
     private lateinit var current: Grid
     private lateinit var previous: Grid
+    private var stats = StatsCounter()
     private lateinit var simulationStepCallback: SimulationStepCallback
     private var runningSimulation = false
+
+    val state: EngineState
+        get() = EngineState(previous, stats)
 
     fun load(level: Level) {
         val grid = LevelController.load(level)
         current = grid
         previous = grid.clone()
+        stats = StatsCounter()
     }
 
-    fun startSimulation(callback: SimulationStepCallback, speed: SimulationSpeed) {
+    fun startSimulation(speed: SimulationSpeed, callback: SimulationStepCallback) {
         simulationStepCallback = callback
         runningSimulation = true
         if (speed == SimulationSpeed.PAUSED) {
@@ -49,25 +54,21 @@ class Engine private constructor() {
             runningSimulation = false
             return
         }
-        // TODO: Concurrency to not block UI thread
-        //GlobalScope.launch {
-        simulationLoopCoroutine(speed)
-        //}
+        Thread {
+            simulationLoop(speed)
+        }.start()
     }
 
-    fun simulationLoopCoroutine(speed: SimulationSpeed) {
-        //suspendCoroutine<Nothing> {
-            var stats = StatsCounter()
-            while(runningSimulation) {
-                val timeRequired = measureTime {
-                    stats += performSimulationStep()
-                    simulationStepCallback(previous, stats)
-                }.inWholeMilliseconds.toFloat()
-                stats.timeSpentPlaying += timeRequired
-                val sleepInterval = getSleepInterval(timeRequired, speed)
-                Thread.sleep(sleepInterval.toLong())
-            }
-        //}
+    private fun simulationLoop(speed: SimulationSpeed) {
+        while (runningSimulation) {
+            val timeRequired = measureTime {
+                stats += performSimulationStep()
+                simulationStepCallback(state)
+            }.inWholeMilliseconds.toFloat()
+            val sleepInterval = getSleepInterval(timeRequired, speed)
+            stats.timeSpentPlaying += timeRequired + sleepInterval
+            Thread.sleep(sleepInterval.toLong())
+        }
     }
 
     fun stopSimulation() {
@@ -97,7 +98,9 @@ class Engine private constructor() {
      * @param position position to spawn the new cell at
      */
     private fun spawnCellIfWithinBounds(cell: Cell, position: GridPosition) {
-        if (position.outOfBounds(current.rowCount, current.columnCount)) { return }
+        if (position.outOfBounds(current.rowCount, current.columnCount)) {
+            return
+        }
         val existingCell = previous.get(position)
         if (existingCell is EmptyCell) {
             current.replace(position, cell)
