@@ -1,6 +1,7 @@
 package lastprofstanding.engine
 
 import lastprofstanding.engine.grid.*
+import kotlin.math.max
 import kotlin.time.measureTime
 
 class Engine private constructor() {
@@ -26,15 +27,21 @@ class Engine private constructor() {
             }.toFloat()
             // 1 step/s for X1
             val targetPeriod = 1000f / divisor
-            return targetPeriod - stepTime
+            return max(targetPeriod - stepTime, 0f)
         }
     }
 
-    private lateinit var current: Grid
-    private lateinit var previous: Grid
+
+    private var current: Grid
+    private var previous: Grid
     private var stats = StatsCounter()
     private lateinit var simulationStepCallback: SimulationStepCallback
     private var runningSimulation = false
+
+    init {
+        current = Grid(0, 0)
+        previous = Grid(0, 0)
+    }
 
     val state: EngineState
         get() = EngineState(previous, stats)
