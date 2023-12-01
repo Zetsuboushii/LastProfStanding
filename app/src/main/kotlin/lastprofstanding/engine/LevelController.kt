@@ -10,7 +10,7 @@ class LevelController {
             when(level) {
                 Level.BASIC -> {
                     return Grid(20, 20).apply {
-                        replace(GridPosition(5, 5), MyCell())
+                        replace(GridPosition(15, 10), MyCell())
                     }
                 }
             }
