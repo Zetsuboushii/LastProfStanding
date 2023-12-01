@@ -1,0 +1,64 @@
+@startuml
+package GUI {
+}
+
+Input -> GUI: löst Aktionen aus
+
+package Input{
+}
+
+package Game-Engine {
+    class Engine {
+        State state
+    }
+    class State {
+        Grid current
+        Grid previous
+        StatsCounter stats
+    }
+    Engine -> State :Zugriff
+    class Grid {
+        Array<Array<Cell>> grid
+    }
+    State --> "2" Grid: (inkl. Zugriff)
+
+    class LevelController {
+    }
+    LevelController -> State : initialisiert
+
+    class StatsCounter
+    State --> "1" StatsCounter
+
+    package CellPackage {
+        interface InteractiveCell {
+            spawnCellIfAppropriate()
+            move()
+        }
+
+        abstract class Cell {
+            reusableLogicFunctions()
+        }
+
+        class Lecturer extends Cell implements InteractiveCell {
+        }
+    }
+
+    class Capability
+}
+
+GUI -> Engine: kontrolliert Simulationsstatus + Fähigkeit
+GUI -> LevelController: Befehle
+GUI -> CellPackage: Erstellt
+GUI -> Sound: Befehle (ggf. Einstellungen)
+Engine -> Sound: Befehle (Soundeffekte)
+dfEngine ..> GUI: Übermittelt aktuellen State
+GUI -> Capability: ruft Fähigkeit auf
+Capability -> Engine: löst aus
+
+class Sound
+
+GUI -> State :ändert
+
+
+
+@enduml
