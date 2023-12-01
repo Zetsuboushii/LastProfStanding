@@ -1,6 +1,6 @@
 package lastprofstanding.engine
 
-import lastprofstanding.MyCell
+import MyCell
 import lastprofstanding.engine.grid.Grid
 import lastprofstanding.engine.grid.GridPosition
 

@@ -9,5 +9,5 @@ interface Iconated {
 }
 
 fun Iconated.getIcon(): Image {
-    TODO("Fetch image in javafx-compatible format")
+    TODO("Fetch image in compose-compatible format")
 }
