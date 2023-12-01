@@ -20,10 +20,8 @@ class Grid(rows: Int, columns: Int): Cloneable {
         }
     }
 
-    fun get(position: GridPosition): Cell {
-        // Any more complicated logic to check whether within bounds or just returning Cell? would degrade performance
-        // Therefore, it's better to catch any errors immediately when accessing out-of-bounds cells
-        return grid[position.first][position.second]
+    fun get(position: GridPosition): Cell? {
+        return grid.getOrNull(position.first)?.getOrNull(position.second)
     }
 
     fun replace(position: GridPosition, with: Cell) {
@@ -38,7 +36,7 @@ class Grid(rows: Int, columns: Int): Cloneable {
         var output = ""
         for (y in 0 until rowCount) {
             for (x in 0 until columnCount) {
-                output += get(GridPosition(x, y)).textRepresentation
+                output += get(GridPosition(x, y))?.textRepresentation ?: "No cell at position ($x, $y)"
             }
             output += "\n"
         }
@@ -50,7 +48,9 @@ class Grid(rows: Int, columns: Int): Cloneable {
             for (x in 0 until rowCount) {
                 for (y in 0 until columnCount) {
                     val position = GridPosition(x, y)
-                    replace(position, this@Grid.get(position).clone())
+                    this@Grid.get(position)?.let {
+                        replace(position, it.clone())
+                    }
                 }
             }
         }

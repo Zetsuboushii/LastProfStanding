@@ -2,4 +2,4 @@ package lastprofstanding.engine
 
 import lastprofstanding.engine.grid.Grid
 
-typealias SimulationStepCallback = (Grid, StatsCounter) -> Unit
+data class EngineState(val grid: Grid, val stats: StatsCounter)
