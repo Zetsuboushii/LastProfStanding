@@ -96,8 +96,8 @@ class Engine private constructor() {
             for (y in 0 until previous.rowCount) {
                 val position = GridPosition(x, y)
                 previous.get(position)?.let { cell ->
-                    if (cell is InteractiveCell<*>) {
-                        spawnNewCells(cell, position)
+                    if (cell is InteractiveCell) {
+                        spawnNewCellsForCell(cell, position)
                     }
                     moveCellAppropriately(cell, position)
                     eliminateCellIfLifetimeOver(cell, position)
@@ -109,12 +109,14 @@ class Engine private constructor() {
         return StatsCounter(0f, 0) // TODO: Update stats counter in step
     }
 
-    private fun spawnNewCells(
-        cell: InteractiveCell<*>,
+    private fun spawnNewCellsForCell(
+        spawningCell: InteractiveCell,
         position: GridPosition
     ) {
-        cell.testForSpawningNewCell(previous, position)?.let {
-            spawnCellIfWithinBounds(it.first, it.second)
+        spawningCell.getSpawnPattern(previous, position)?.let { pattern ->
+            for ((pos, cell) in pattern) {
+                spawnCellIfWithinBounds(cell, pos)
+            }
         }
     }
 
