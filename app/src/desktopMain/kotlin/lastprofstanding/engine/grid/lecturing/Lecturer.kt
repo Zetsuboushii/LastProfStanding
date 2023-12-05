@@ -5,9 +5,9 @@ import lastprofstanding.engine.grid.Iconated
 import lastprofstanding.engine.grid.InteractiveCell
 import lastprofstanding.engine.grid.Weakness
 
-abstract class Lecturer<SpawnCellType : Cell>(
+abstract class Lecturer(
         val name: String,
         movementSpeed: Float,
         weakness: Weakness?
-) : Cell(false, movementSpeed, null, weakness), InteractiveCell<SpawnCellType>, Iconated {
+) : Cell(false, movementSpeed, null, weakness), InteractiveCell, Iconated {
 }

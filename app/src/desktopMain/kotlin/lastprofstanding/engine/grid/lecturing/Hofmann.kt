@@ -3,8 +3,9 @@ package lastprofstanding.engine.grid.lecturing
 import lastprofstanding.engine.grid.Cell
 import lastprofstanding.engine.grid.Grid
 import lastprofstanding.engine.grid.GridPosition
+import lastprofstanding.engine.grid.SpawnPattern
 
-class Hofmann: Lecturer<ExmatriculationCell>("Hofmann",0.1f,null) {
+class Hofmann : Lecturer("Hofmann", 0.1f, null) {
     override fun clone(): Cell {
         return Hofmann().apply {
             movementSpeed = this@Hofmann.movementSpeed
@@ -19,9 +20,7 @@ class Hofmann: Lecturer<ExmatriculationCell>("Hofmann",0.1f,null) {
     override val textRepresentation: String
         get() = "H"
 
-    override fun testForSpawningNewCell(grid: Grid, position: GridPosition): Pair<ExmatriculationCell, GridPosition>? {
+    override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern? {
         TODO("Not yet implemented")
     }
-
-
 }
