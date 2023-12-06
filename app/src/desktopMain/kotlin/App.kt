@@ -114,6 +114,6 @@ fun App() {
             }
         }
     }) {
-        engineState.grid.getTexturedRepresentation(test)
+        engineState.grid.getTexturedRepresentation(testmap)
     }
 }
