@@ -86,7 +86,7 @@ class Engine private constructor() {
     }
 
     fun applyAbility(ability: AbilityType, position: GridPosition) {
-        previous.get(position)?.let { cell ->
+        previous.get(position)?.let { cell: Cell ->
             ability.getAbility().apply(cell)
         }
     }
@@ -95,7 +95,7 @@ class Engine private constructor() {
         for (x in 0 until previous.columnCount) {
             for (y in 0 until previous.rowCount) {
                 val position = GridPosition(x, y)
-                previous.get(position)?.let { cell ->
+                previous.get(position)?.let { cell: Cell ->
                     spawnNewCellsForCell(cell, position)
                     moveCellAppropriately(cell, position)
                     eliminateCellIfLifetimeOver(cell, position)
@@ -112,7 +112,7 @@ class Engine private constructor() {
         position: GridPosition
     ) {
         if (spawningCell.testForSpawningNewCells(previous, position)) {
-            spawningCell.getSpawnPattern(previous, position)?.let { pattern ->
+            spawningCell.getSpawnPattern(previous, position)?.let { pattern: SpawnPattern ->
                 for ((pos, cell) in pattern) {
                     spawnCellIfWithinBounds(cell, pos)
                 }
@@ -160,7 +160,7 @@ class Engine private constructor() {
     }
 
     private fun evaluateWeakness(cell: Cell, position: GridPosition) {
-        cell.weakness?.let { weakness ->
+        cell.weakness?.let { weakness: Weakness<*> ->
             if (cell.countCells(previous, position, weakness.radius, weakness.against) >= weakness.cellCount) {
                 current.replace(position, EmptyCell())
             }

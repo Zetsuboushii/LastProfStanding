@@ -2,4 +2,4 @@ package lastprofstanding.engine.grid
 
 import kotlin.reflect.KClass
 
-data class Weakness(val against: KClass<Cell>, val cellCount: Int, val radius: Int)
+data class Weakness<WeaknessType : Cell>(val against: KClass<WeaknessType>, val cellCount: Int, val radius: Int)

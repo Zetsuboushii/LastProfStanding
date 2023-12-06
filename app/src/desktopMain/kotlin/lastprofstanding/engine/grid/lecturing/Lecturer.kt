@@ -7,7 +7,7 @@ import lastprofstanding.engine.grid.Weakness
 abstract class Lecturer(
         val name: String,
         movementSpeed: Float,
-        weakness: Weakness?,
+        weakness: Weakness<*>?,
         spawnRate: Float?
 ) : Cell(false, movementSpeed, null, weakness, spawnRate), Iconated {
 }
