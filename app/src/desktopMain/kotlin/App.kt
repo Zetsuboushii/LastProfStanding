@@ -9,11 +9,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import lastprofstanding.engine.*
 import lastprofstanding.engine.grid.*
+import java.io.FileInputStream
 
 class MyCell : Cell(true, 1f, null, null, 10f) {
-
+    override val textRepresentation: String = "M"
     override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern {
         return createSpawnPattern(position, Pair(GridPosition(0, -3), MyCell()))
+    }
+
+    override fun getDrawableTexture(): FileInputStream {
+        TODO("Not yet implemented")
     }
 
     override fun clone(): MyCell {

@@ -1,19 +1,26 @@
 package lastprofstanding.engine.grid
 
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.res.loadImageBitmap
 import lastprofstanding.engine.MovementDirection
+import java.io.FileInputStream
 import kotlin.reflect.KClass
 
-abstract class Cell(
+open class Cell(
     val passable: Boolean,
     /**
      * Integer x means "move x cell(s) in one step". Non-integer values mean a random function will determine with the probability 0<p<1 whether the cell will make one further step.
      */
     var movementSpeed: Float,
     val lifetime: Int?,
-    val weakness: Weakness?,
+    val weakness: Weakness<*>?,
     var spawnRate: Float?
 
-) : Iconated {
+) {
+    open val textRepresentation = "C"
+
     var currentMovement = MovementDirection.LEFT
     var straightMovementCounter = 1
     var stepsSurvived = 1
@@ -36,7 +43,25 @@ abstract class Cell(
         }
     }
 
-    abstract fun clone(): Cell
+    open fun getDrawableTexture(): FileInputStream {
+        throw NotImplementedError("getDrawableTexture needs to be overriden by subclasses.")
+    }
+
+    @Composable
+    open fun draw() {
+        Image(
+            painter = BitmapPainter(image = loadImageBitmap(getDrawableTexture())),
+            contentDescription = null,
+        )
+    }
+
+    open fun clone(): Cell {
+        return Cell(passable, movementSpeed, lifetime, weakness, spawnRate).apply {
+            currentMovement = this@Cell.currentMovement
+            straightMovementCounter = this@Cell.straightMovementCounter
+            stepsSurvived = this@Cell.stepsSurvived
+        }
+    }
 
     /**
      * Get the spawn pattern the cell spawns other cells by (relative positions).
@@ -53,7 +78,7 @@ abstract class Cell(
 
     open fun testForSpawningNewCells(grid: Grid, position: GridPosition): Boolean {
         return spawnRate?.let {
-            stepsSurvived % getConcreteStepFromContinuousValue(spawnRate) == 0
+            stepsSurvived % getConcreteStepFromContinuousValue(it) == 0
         } ?: false
     }
 

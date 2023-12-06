@@ -1,7 +1,6 @@
 package lastprofstanding.engine.grid.lecturing
 
 import lastprofstanding.engine.grid.Cell
-import lastprofstanding.engine.grid.Iconated
 import lastprofstanding.engine.grid.Weakness
 
 abstract class Lecturer(
@@ -9,5 +8,4 @@ abstract class Lecturer(
         movementSpeed: Float,
         weakness: Weakness<*>?,
         spawnRate: Float?
-) : Cell(false, movementSpeed, null, weakness, spawnRate), Iconated {
-}
+) : Cell(false, movementSpeed, null, weakness, spawnRate)
