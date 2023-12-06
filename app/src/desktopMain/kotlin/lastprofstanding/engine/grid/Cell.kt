@@ -11,7 +11,7 @@ abstract class Cell(
     var movementSpeed: Float,
     val lifetime: Int?,
     val weakness: Weakness?,
-    val spawnRate: Float?
+    var spawnRate: Float?
 ) : Iconated {
     var currentMovement = MovementDirection.LEFT
     var straightMovementCounter = 1
