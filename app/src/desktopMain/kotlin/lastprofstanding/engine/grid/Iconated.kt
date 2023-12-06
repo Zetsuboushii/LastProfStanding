@@ -1,13 +1,25 @@
 package lastprofstanding.engine.grid
 
-import java.awt.Image
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 
 interface Iconated {
-    val icon: Int
+    val spriteId: String
+
+    @get:Composable
+    val sprite: Unit
+
     /** single-character text representation of a visual object primarily used for debugging purposes */
     val textRepresentation: String
 }
 
-fun Iconated.getIcon(): Image {
-    TODO("Fetch image in compose-compatible format")
+@Composable
+fun getIcon(spriteId: String): Unit {
+    @OptIn(ExperimentalResourceApi::class)
+    return Image(
+        painter = painterResource("lastprofstanding/res/textures/sprites/${spriteId}.png"),
+        contentDescription = null
+    )
 }
