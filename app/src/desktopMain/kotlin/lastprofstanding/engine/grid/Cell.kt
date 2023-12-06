@@ -12,6 +12,7 @@ abstract class Cell(
     val lifetime: Int?,
     val weakness: Weakness?,
     var spawnRate: Float?
+
 ) : Iconated {
     var currentMovement = MovementDirection.LEFT
     var straightMovementCounter = 1
@@ -92,7 +93,7 @@ abstract class Cell(
         for (x in around.first - radius..around.first + radius) {
             for (y in around.second - radius..around.second + radius) {
                 val position = GridPosition(x, y)
-                grid.get(position)?.let { cell ->
+                grid.get(position)?.let { cell: Cell ->
                     if (predicate.invoke(cell, position)) {
                         counter += 1
                     }
@@ -105,8 +106,8 @@ abstract class Cell(
     /**
      * Count the number of cells that are within the given radius (calculated as a square) around the given position and are of the given class.
      */
-    fun countCells(grid: Grid, around: GridPosition, radius: Int, ofClass: KClass<Cell>): Int {
-        return countCells(grid, around, radius) { cell, _ ->
+    fun <CellType : Cell> countCells(grid: Grid, around: GridPosition, radius: Int, ofClass: KClass<CellType>): Int {
+        return countCells(grid, around, radius) { cell: Cell, _ ->
             ofClass.isInstance(cell)
         }
     }

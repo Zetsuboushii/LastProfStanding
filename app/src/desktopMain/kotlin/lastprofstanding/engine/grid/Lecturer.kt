@@ -5,6 +5,5 @@ abstract class Lecturer(
         movementSpeed: Float,
         weakness: Weakness?,
         spawnRate: Float,
-
 ) : Cell(false, movementSpeed, null, weakness, spawnRate), Iconated {
 }
