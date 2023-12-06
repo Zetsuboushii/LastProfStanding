@@ -10,13 +10,18 @@ import androidx.compose.runtime.*
 import lastprofstanding.engine.*
 import lastprofstanding.engine.grid.*
 
-class MyCell : Cell(true), InteractiveCell<MyCell> {
-    override fun testForSpawningNewCell(grid: Grid, position: GridPosition): Pair<MyCell, GridPosition> {
-        return Pair(MyCell(), position + GridPosition(0, 1))
+class MyCell : Cell(true, 1f, null, null, 10f) {
+
+    override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern {
+        return createSpawnPattern(position, Pair(GridPosition(0, -3), MyCell()))
     }
 
-    override fun clone(): Cell {
-        return MyCell()
+    override fun clone(): MyCell {
+        return MyCell().apply {
+            straightMovementCounter = this@MyCell.straightMovementCounter
+            currentMovement = this@MyCell.currentMovement
+            stepsSurvived = this@MyCell.stepsSurvived
+        }
     }
 }
 

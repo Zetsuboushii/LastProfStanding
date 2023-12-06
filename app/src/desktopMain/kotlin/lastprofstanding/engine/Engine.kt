@@ -54,6 +54,9 @@ class Engine private constructor() {
     }
 
     fun startSimulation(speed: SimulationSpeed, callback: SimulationStepCallback) {
+        if (runningSimulation) {
+            return
+        }
         simulationStepCallback = callback
         runningSimulation = true
         if (speed == SimulationSpeed.PAUSED) {
@@ -82,21 +85,44 @@ class Engine private constructor() {
         runningSimulation = false
     }
 
+    fun applyAbility(ability: AbilityType, position: GridPosition) {
+        previous.get(position)?.let { cell: Cell ->
+            ability.getAbility().apply(cell)
+        }
+    }
+
     private fun performSimulationStep(): StatsCounter {
         for (x in 0 until previous.columnCount) {
             for (y in 0 until previous.rowCount) {
                 val position = GridPosition(x, y)
-                val cell = previous.get(position)
-                if (cell is InteractiveCell<*>) {
-                    val spawnData = cell.testForSpawningNewCell(previous, position)
-                    if (spawnData != null) {
-                        spawnCellIfWithinBounds(spawnData.first, spawnData.second)
-                    }
+                previous.get(position)?.let { cell: Cell ->
+                    spawnNewCellsForCell(cell, position)
+                    moveCellAppropriately(cell, position)
+                    eliminateCellIfLifetimeOver(cell, position)
+                    evaluateWeakness(cell, position)
                 }
             }
         }
         previous = current.clone()
         return StatsCounter(0f, 0) // TODO: Update stats counter in step
+    }
+
+    private fun spawnNewCellsForCell(
+        spawningCell: Cell,
+        position: GridPosition
+    ) {
+        if (spawningCell.testForSpawningNewCells(previous, position)) {
+            spawningCell.getSpawnPattern(previous, position)?.let { pattern: SpawnPattern ->
+                for ((pos, cell) in pattern) {
+                    spawnCellIfWithinBounds(cell, pos)
+                }
+            }
+        }
+    }
+
+    private fun moveCellAppropriately(cell: Cell, position: GridPosition) {
+        val newPos = cell.getMovementData(previous, position)
+        moveCellIfPossible(cell, position, newPos)
     }
 
     /**
@@ -111,6 +137,33 @@ class Engine private constructor() {
         val existingCell = previous.get(position)
         if (existingCell is EmptyCell) {
             current.replace(position, cell)
+        }
+    }
+
+    private fun moveCellIfPossible(cell: Cell, currentPosition: GridPosition, newPosition: GridPosition) {
+        if (!newPosition.outOfBounds(previous.rowCount, previous.columnCount)) {
+            previous.get(newPosition)?.let {
+                if (it.passable) {
+                    current.replace(newPosition, cell)
+                    current.replace(currentPosition, EmptyCell())
+                    cell.straightMovementCounter += 1
+                }
+            }
+        }
+    }
+
+    private fun eliminateCellIfLifetimeOver(cell: Cell, position: GridPosition) {
+        cell.stepsSurvived += 1
+        if (cell.evaluateWhetherLifetimeOver()) {
+            current.replace(position, EmptyCell())
+        }
+    }
+
+    private fun evaluateWeakness(cell: Cell, position: GridPosition) {
+        cell.weakness?.let { weakness: Weakness<*> ->
+            if (cell.countCells(previous, position, weakness.radius, weakness.against) >= weakness.cellCount) {
+                current.replace(position, EmptyCell())
+            }
         }
     }
 }

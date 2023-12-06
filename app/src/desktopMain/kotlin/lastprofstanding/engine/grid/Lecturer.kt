@@ -1,7 +1,9 @@
 package lastprofstanding.engine.grid
 
-abstract class Lecturer<SpawnCellType : Cell>(
+abstract class Lecturer(
         val name: String,
-        passable: Boolean
-) : Cell(passable), InteractiveCell<SpawnCellType>, Iconated {
+        movementSpeed: Float,
+        weakness: Weakness<*>?,
+        spawnRate: Float
+) : Cell(false, movementSpeed, null, weakness, spawnRate), Iconated {
 }
