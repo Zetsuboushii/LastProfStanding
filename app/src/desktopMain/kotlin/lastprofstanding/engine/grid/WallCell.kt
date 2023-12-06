@@ -1,6 +1,6 @@
 package lastprofstanding.engine.grid
 
-class WallCell : Cell(false, 0f, null, null) {
+class WallCell : Cell(false, 0f, null, null, null) {
     override val icon = TODO("Load icon")
     override val textRepresentation = "X"
 

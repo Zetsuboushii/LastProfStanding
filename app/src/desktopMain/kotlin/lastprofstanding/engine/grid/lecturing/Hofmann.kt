@@ -5,7 +5,7 @@ import lastprofstanding.engine.grid.Grid
 import lastprofstanding.engine.grid.GridPosition
 import lastprofstanding.engine.grid.SpawnPattern
 
-class Hofmann : Lecturer("Hofmann", 0.1f, null) {
+class Hofmann : Lecturer("Hofmann", 0.1f, null, null) {
     override fun clone(): Cell {
         return Hofmann().apply {
             movementSpeed = this@Hofmann.movementSpeed
