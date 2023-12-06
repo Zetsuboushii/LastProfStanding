@@ -5,7 +5,7 @@ class EmptyCell : Cell(true, 0f, null, null, null) {
         get() = TODO("Replace with valid icon")
     override val textRepresentation = "O"
 
-    override fun clone(): Cell {
+    override fun clone(): EmptyCell {
         return EmptyCell()
     }
 }

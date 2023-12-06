@@ -16,7 +16,7 @@ class MyCell : Cell(true, 1f, null, null, 10f) {
         return createSpawnPattern(position, Pair(GridPosition(0, -3), MyCell()))
     }
 
-    override fun clone(): Cell {
+    override fun clone(): MyCell {
         return MyCell().apply {
             straightMovementCounter = this@MyCell.straightMovementCounter
             currentMovement = this@MyCell.currentMovement

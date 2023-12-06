@@ -1,11 +1,9 @@
 package lastprofstanding.engine.grid.lecturing
 
-import lastprofstanding.engine.grid.Cell
-import lastprofstanding.engine.grid.Grid
-import lastprofstanding.engine.grid.GridPosition
-import lastprofstanding.engine.grid.SpawnPattern
+import MyCell
+import lastprofstanding.engine.grid.*
 
-class Hofmann : Lecturer("Hofmann", 0.1f, null, null) {
+class Hofmann : Lecturer("Hofmann", 0.1f, Weakness(MyCell::class, 5, 1), null) {
     override fun clone(): Cell {
         return Hofmann().apply {
             movementSpeed = this@Hofmann.movementSpeed
