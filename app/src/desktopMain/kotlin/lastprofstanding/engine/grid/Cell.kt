@@ -11,24 +11,51 @@ abstract class Cell(
     var movementSpeed: Float,
     val lifetime: Int?,
     val weakness: Weakness?,
+    val spawnRate: Float?
 ) : Iconated {
     var currentMovement = MovementDirection.LEFT
     var straightMovementCounter = 1
-    var stepsSurvived = 0
+    var stepsSurvived = 1
+
+    companion object {
+        /**
+         * Calculate a concrete step value (integer) from a continuous float value.
+         * Returns the integer value of the float value. If the float value is not an integer, a random function will determine with the probability 0<p<1 whether the cell will make one further step.
+         */
+        private fun getConcreteStepFromContinuousValue(value: Float): Int {
+            val randomPortion = value % 1
+            if (randomPortion == 0f) {
+                return value.toInt()
+            }
+            return if (Math.random() < randomPortion) {
+                value.toInt() + 1
+            } else {
+                value.toInt()
+            }
+        }
+    }
 
     abstract fun clone(): Cell
 
-    private fun getMovementDistance(): Int {
-        val randomPortion = movementSpeed % 1
-        if (randomPortion == 0f) {
-            return movementSpeed.toInt()
-        }
-        return if (Math.random() < randomPortion) {
-            movementSpeed.toInt() + 1
-        } else {
-            movementSpeed.toInt()
-        }
+    /**
+     * Get the spawn pattern the cell spawns other cells by (relative positions).
+     * Might also return `GridPosition`s that are out-of-bounds.
+     * Cells will only be spawned, if `testForSpawningNewCells` returns true.
+     * Default implementation: return null (no cells spawned)
+     * @param grid Grid to calculate
+     * @param position Position where the new cell should be spawned
+     * @return Optional Spawn pattern
+     */
+    open fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern? {
+        return null
     }
+
+    open fun testForSpawningNewCells(grid: Grid, position: GridPosition): Boolean {
+        return spawnRate?.let {
+            stepsSurvived % getConcreteStepFromContinuousValue(spawnRate) == 0
+        } ?: false
+    }
+
 
     private fun checkMovementDirection(grid: Grid, position: GridPosition, direction: MovementDirection): Boolean {
         return grid.get(position + direction.getPositionDelta())?.passable ?: false
@@ -47,7 +74,7 @@ abstract class Cell(
     fun getMovementData(grid: Grid, position: GridPosition): GridPosition {
         val movementDirection = getMovementDirection(grid, position)
         currentMovement = movementDirection
-        return position + movementDirection.getPositionDelta() * getMovementDistance()
+        return position + movementDirection.getPositionDelta() * getConcreteStepFromContinuousValue(movementSpeed)
     }
 
     fun evaluateWhetherLifetimeOver(): Boolean {
@@ -57,6 +84,9 @@ abstract class Cell(
         return false
     }
 
+    /**
+     * Count the number of cells that are within the given radius (calculated as a square) around the given position and match the given predicate.
+     */
     fun countCells(grid: Grid, around: GridPosition, radius: Int, predicate: (Cell, GridPosition) -> Boolean): Int {
         var counter = 0
         for (x in around.first - radius..around.first + radius) {
@@ -72,6 +102,9 @@ abstract class Cell(
         return counter
     }
 
+    /**
+     * Count the number of cells that are within the given radius (calculated as a square) around the given position and are of the given class.
+     */
     fun countCells(grid: Grid, around: GridPosition, radius: Int, ofClass: KClass<Cell>): Int {
         return countCells(grid, around, radius) { cell, _ ->
             ofClass.isInstance(cell)
