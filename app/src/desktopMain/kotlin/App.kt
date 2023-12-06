@@ -18,12 +18,6 @@ class MyCell : Cell(true), InteractiveCell<MyCell> {
     override fun clone(): Cell {
         return MyCell()
     }
-
-    override val spriteId = "hofmann"
-    override val sprite: Unit
-        @Composable
-        get() = getIcon(spriteId)
-    override val textRepresentation = "M"
 }
 
 @Composable
