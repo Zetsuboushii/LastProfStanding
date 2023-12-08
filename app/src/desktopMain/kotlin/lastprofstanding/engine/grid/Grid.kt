@@ -40,20 +40,16 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
     }
 
     @Composable
-    fun getTexturedRepresentation() {
-        var offset: Int = 0
+    fun draw() {
         for (row in grid.indices) {
-            Row(modifier = Modifier.padding(top = offset.dp)) {
+            Row {
                 for (cell in grid[row]) {
                     cell.draw()
                 }
             }
-            offset += 16
         }
     }
 
-
-    /*
     fun getTextRepresentation(): String {
         var output = ""
         for (y in 0 until rowCount) {
@@ -64,7 +60,6 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
         }
         return output
     }
-     */
 
     public override fun clone(): Grid {
         return Grid(rowCount, columnCount).apply {

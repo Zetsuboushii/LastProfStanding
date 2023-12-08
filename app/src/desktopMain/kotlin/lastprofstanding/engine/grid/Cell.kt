@@ -1,9 +1,12 @@
 package lastprofstanding.engine.grid
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.unit.dp
 import lastprofstanding.engine.MovementDirection
 import java.io.File
 import kotlin.reflect.KClass
@@ -57,6 +60,7 @@ open class Cell(
             Image(
                 painter = it,
                 contentDescription = null,
+                Modifier.size(16.dp)
             )
         }
     }
