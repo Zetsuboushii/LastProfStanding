@@ -9,16 +9,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import lastprofstanding.engine.*
 import lastprofstanding.engine.grid.*
-import java.io.FileInputStream
 
 class MyCell : Cell(true, 1f, null, null, 10f) {
     override val textRepresentation: String = "M"
     override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern {
         return createSpawnPattern(position, Pair(GridPosition(0, -3), MyCell()))
-    }
-
-    override fun getDrawableTexture(): FileInputStream {
-        TODO("Not yet implemented")
     }
 
     override fun clone(): MyCell {
@@ -33,11 +28,11 @@ class MyCell : Cell(true, 1f, null, null, 10f) {
 @Composable
 fun App() {
     val engine by remember { mutableStateOf(Engine.getInstance()) }
-    var engineState by remember { mutableStateOf(EngineState(Grid(0, 0), StatsCounter())) }
+    var engineState by remember { mutableStateOf(EngineState(Grid(0, 0), Grid(0, 0), StatsCounter())) }
     var didResetGrid by remember { mutableStateOf(false) }
 
     if (!didResetGrid) {
-        engine.load(Level.BASIC)
+        engine.load(LevelType.BASIC)
         engineState = engine.state
         didResetGrid = true
     }
@@ -111,13 +106,13 @@ fun App() {
                 Text("Stop simulation")
             }
             Button(onClick = {
-                engine.load(Level.BASIC)
+                engine.load(LevelType.BASIC)
                 engineState = engine.state
             }) {
                 Text("Reset simulation")
             }
         }
     }) {
-        engineState.grid.getTexturedRepresentation(testmap)
+        engineState.tileGrid.getTexturedRepresentation()
     }
 }

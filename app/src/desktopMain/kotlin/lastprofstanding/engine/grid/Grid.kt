@@ -1,22 +1,20 @@
 package lastprofstanding.engine.grid
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.dp
 
-class Grid(rows: Int, columns: Int) : Cloneable {
-    val rowCount: Int = rows
-    val columnCount: Int = columns
-    private var grid: MutableList<MutableList<Cell>> = mutableListOf()
+class Grid(grid: List<List<Cell>>) : Cloneable {
+    val rowCount: Int = grid.size
+    val columnCount: Int = grid.getOrNull(0)?.size ?: 0
+    var grid = grid.map { row -> row.toMutableList() }.toMutableList()
 
-    init {
-        initialize()
-    }
+    constructor(
+        rowCount: Int,
+        columnCount: Int
+    ) : this(MutableList(rowCount) { MutableList(columnCount) { EmptyCell() } })
 
     fun initialize() {
         grid.clear()
@@ -42,15 +40,12 @@ class Grid(rows: Int, columns: Int) : Cloneable {
     }
 
     @Composable
-    fun getTexturedRepresentation(grid: Array<Array<TileType>>) {
+    fun getTexturedRepresentation() {
         var offset: Int = 0
         for (row in grid.indices) {
             Row(modifier = Modifier.padding(top = offset.dp)) {
                 for (cell in grid[row]) {
-                    Image(
-                        painter = BitmapPainter(image = loadImageBitmap(cell.getFile().inputStream())),
-                        contentDescription = null,
-                    )
+                    cell.draw()
                 }
             }
             offset += 16

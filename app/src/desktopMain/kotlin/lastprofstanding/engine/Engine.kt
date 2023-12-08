@@ -34,6 +34,7 @@ class Engine private constructor() {
 
     private var current: Grid
     private var previous: Grid
+    private var tileGrid: Grid
     private var stats = StatsCounter()
     private lateinit var simulationStepCallback: SimulationStepCallback
     private var runningSimulation = false
@@ -41,15 +42,17 @@ class Engine private constructor() {
     init {
         current = Grid(0, 0)
         previous = Grid(0, 0)
+        tileGrid = Grid(0, 0)
     }
 
     val state: EngineState
-        get() = EngineState(previous, stats)
+        get() = EngineState(previous, tileGrid, stats)
 
-    fun load(level: Level) {
-        val grid = LevelController.load(level)
-        current = grid
-        previous = grid.clone()
+    fun load(level: LevelType) {
+        val lvl = LevelController.load(level)
+        current = lvl.dataGrid
+        previous = lvl.dataGrid.clone()
+        tileGrid = lvl.tileGrid
         stats = StatsCounter()
     }
 

@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.loadImageBitmap
 import lastprofstanding.engine.MovementDirection
-import java.io.FileInputStream
+import java.io.File
 import kotlin.reflect.KClass
 
 open class Cell(
@@ -43,16 +43,22 @@ open class Cell(
         }
     }
 
-    open fun getDrawableTexture(): FileInputStream {
-        throw NotImplementedError("getDrawableTexture needs to be overriden by subclasses.")
+    open fun getFile(): File? {
+        return null
     }
 
     @Composable
     open fun draw() {
-        Image(
-            painter = BitmapPainter(image = loadImageBitmap(getDrawableTexture())),
-            contentDescription = null,
-        )
+        getFile()?.let { file ->
+            loadImageBitmap(file.inputStream())
+        }?.let {
+            BitmapPainter(image = it)
+        }?.let {
+            Image(
+                painter = it,
+                contentDescription = null,
+            )
+        }
     }
 
     open fun clone(): Cell {
