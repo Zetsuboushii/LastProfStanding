@@ -111,6 +111,21 @@ fun App() {
             }) {
                 Text("Reset simulation")
             }
+            Button(onClick = {
+                Sound.getInstance().play(Sound.SoundFile.ROBLOX_DEATH_SOUND)
+            }) {
+                Text("Sound check (1)")
+            }
+            Button(onClick = {
+                Sound.getInstance().play(Sound.SoundFile.SETLX_SOUNDTRACK)
+            }) {
+                Text("Sound check (2)")
+            }
+            Button(onClick = {
+                Sound.getInstance().stopBackgroundPlayback()
+            }) {
+                Text("Stop sound check")
+            }
         }
     }) {
         engineState.tileGrid.getTexturedRepresentation()
