@@ -102,12 +102,19 @@ class Engine private constructor() {
                     spawnNewCellsForCell(cell, position)
                     moveCellAppropriately(cell, position)
                     eliminateCellIfLifetimeOver(cell, position)
+                    eliminateCellIfDying(cell, position)
                     evaluateWeakness(cell, position)
                 }
             }
         }
         previous = current.clone()
         return StatsCounter(0f, 0) // TODO: Update stats counter in step
+    }
+
+    private fun eliminateCellIfDying(cell: Cell, position: GridPosition) {
+        if (cell.checkIfDying(previous, position)) {
+            killCellAt(position)
+        }
     }
 
     private fun spawnNewCellsForCell(
@@ -118,6 +125,7 @@ class Engine private constructor() {
             spawningCell.getSpawnPattern(previous, position)?.let { pattern: SpawnPattern ->
                 for ((pos, cell) in pattern) {
                     spawnCellIfWithinBounds(cell, pos)
+                    spawningCell.activeAbility?.applyToSpawnedCell(cell)
                 }
             }
         }
@@ -138,7 +146,7 @@ class Engine private constructor() {
             return
         }
         val existingCell = previous.get(position)
-        if (existingCell is EmptyCell) {
+        if (existingCell?.passable != false) {
             current.replace(position, cell)
         }
     }
@@ -158,14 +166,19 @@ class Engine private constructor() {
     private fun eliminateCellIfLifetimeOver(cell: Cell, position: GridPosition) {
         cell.stepsSurvived += 1
         if (cell.evaluateWhetherLifetimeOver()) {
-            current.replace(position, EmptyCell())
+            killCellAt(position)
         }
+    }
+
+    private fun killCellAt(position: GridPosition) {
+        val tile = tileGrid.get(position) as Tile
+        current.replace(position, tile.generateDataCell())
     }
 
     private fun evaluateWeakness(cell: Cell, position: GridPosition) {
         cell.weakness?.let { weakness: Weakness<*> ->
             if (cell.countCells(previous, position, weakness.radius, weakness.against) >= weakness.cellCount) {
-                current.replace(position, EmptyCell())
+                killCellAt(position)
             }
         }
     }
