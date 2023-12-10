@@ -1,6 +1,7 @@
 package lastprofstanding.engine
 
 import lastprofstanding.engine.grid.*
+import lastprofstanding.engine.grid.lecturing.Lecturer
 import kotlin.math.max
 import kotlin.time.measureTime
 
@@ -95,15 +96,16 @@ class Engine private constructor() {
     }
 
     private fun performSimulationStep(): StatsCounter {
+        var stats = StatsCounter()
         for (x in 0 until previous.columnCount) {
             for (y in 0 until previous.rowCount) {
                 val position = GridPosition(x, y)
                 previous.get(position)?.let { cell: Cell ->
                     spawnNewCellsForCell(cell, position)
                     moveCellAppropriately(cell, position)
-                    eliminateCellIfLifetimeOver(cell, position)
-                    eliminateCellIfDying(cell, position)
-                    evaluateWeakness(cell, position)
+                    stats += eliminateCellIfLifetimeOver(cell, position)
+                    stats += eliminateCellIfDying(cell, position)
+                    stats += evaluateWeakness(cell, position)
                 }
             }
         }
@@ -111,10 +113,11 @@ class Engine private constructor() {
         return StatsCounter(0f, 0) // TODO: Update stats counter in step
     }
 
-    private fun eliminateCellIfDying(cell: Cell, position: GridPosition) {
+    private fun eliminateCellIfDying(cell: Cell, position: GridPosition): StatsCounter {
         if (cell.checkIfDying(previous, position)) {
-            killCellAt(position)
+            return killCellAt(position)
         }
+        return StatsCounter()
     }
 
     private fun spawnNewCellsForCell(
@@ -163,23 +166,32 @@ class Engine private constructor() {
         }
     }
 
-    private fun eliminateCellIfLifetimeOver(cell: Cell, position: GridPosition) {
+    private fun eliminateCellIfLifetimeOver(cell: Cell, position: GridPosition): StatsCounter {
         cell.stepsSurvived += 1
         if (cell.evaluateWhetherLifetimeOver()) {
-            killCellAt(position)
+            return killCellAt(position)
         }
+        return StatsCounter()
     }
 
-    private fun killCellAt(position: GridPosition) {
+    private fun killCellAt(position: GridPosition): StatsCounter {
+        val cell = previous.get(position)
+        val lecturersDied = if (cell is Lecturer) {
+            1
+        } else {
+            0
+        }
         val tile = tileGrid.get(position) as Tile
         current.replace(position, tile.generateDataCell())
+        return StatsCounter(lecturersDied = lecturersDied)
     }
 
-    private fun evaluateWeakness(cell: Cell, position: GridPosition) {
+    private fun evaluateWeakness(cell: Cell, position: GridPosition): StatsCounter {
         cell.weakness?.let { weakness: Weakness<*> ->
             if (cell.countCells(previous, position, weakness.radius, weakness.against) >= weakness.cellCount) {
-                killCellAt(position)
+                return killCellAt(position)
             }
         }
+        return StatsCounter()
     }
 }
