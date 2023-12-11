@@ -106,11 +106,27 @@ class Engine private constructor() {
                     stats += eliminateCellIfLifetimeOver(cell, position)
                     stats += eliminateCellIfDying(cell, position)
                     stats += evaluateWeakness(cell, position)
+                    stats += fight(cell, position)
                 }
             }
         }
         previous = current.clone()
         return StatsCounter(0f, 0) // TODO: Update stats counter in step
+    }
+
+    private fun fight(cell: Cell, position: GridPosition): StatsCounter {
+        cell.strength?.let { strength ->
+            val sameCells = cell.countCells(previous, position, strength.radius, cell::class)
+            val friendlyCells = cell.countCells(previous, position, strength.radius, strength.friendlyCell)
+            val enemyCells =
+                cell.countCells(previous, position, strength.radius) { _, _ -> true } - (sameCells + friendlyCells)
+            val difference = enemyCells - (sameCells + friendlyCells)
+            if (difference > strength.treshold) {
+                killCellAt(position)
+                return StatsCounter(lecturersDied = 1)
+            }
+        }
+        return StatsCounter()
     }
 
     private fun eliminateCellIfDying(cell: Cell, position: GridPosition): StatsCounter {

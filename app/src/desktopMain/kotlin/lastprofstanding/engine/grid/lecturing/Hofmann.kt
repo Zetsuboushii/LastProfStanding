@@ -24,6 +24,9 @@ class Hofmann : Lecturer("Hofmann", 0.1f, Weakness(StroetmannMinion::class, 2, 2
         )
     }
 
+    override fun getFile(): File {
+        return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/hofmann.png")
+    }
 
     override fun checkIfDying(grid: Grid, position: GridPosition): Boolean {
         val mean = 3.5
