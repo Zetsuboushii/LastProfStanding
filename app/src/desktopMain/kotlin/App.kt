@@ -10,21 +10,6 @@ import androidx.compose.runtime.*
 import lastprofstanding.engine.*
 import lastprofstanding.engine.grid.*
 
-class MyCell : Cell(true, 1f, null, null, 10f) {
-    override val textRepresentation: String = "M"
-    override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern {
-        return createSpawnPattern(position, Pair(GridPosition(0, -3), MyCell()))
-    }
-
-    override fun clone(): MyCell {
-        return MyCell().apply {
-            straightMovementCounter = this@MyCell.straightMovementCounter
-            currentMovement = this@MyCell.currentMovement
-            stepsSurvived = this@MyCell.stepsSurvived
-        }
-    }
-}
-
 @Composable
 fun App() {
     val engine by remember { mutableStateOf(Engine.getInstance()) }
@@ -129,5 +114,20 @@ fun App() {
         }
     }) {
         engineState.tileGrid.getTexturedRepresentation()
+    }
+}
+
+class MyCell : Cell(true, 1f, null, null, 10f) {
+    override val textRepresentation: String = "M"
+    override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern {
+        return createSpawnPattern(position, Pair(GridPosition(0, -3), MyCell()))
+    }
+
+    override fun clone(): MyCell {
+        return MyCell().apply {
+            straightMovementCounter = this@MyCell.straightMovementCounter
+            currentMovement = this@MyCell.currentMovement
+            stepsSurvived = this@MyCell.stepsSurvived
+        }
     }
 }

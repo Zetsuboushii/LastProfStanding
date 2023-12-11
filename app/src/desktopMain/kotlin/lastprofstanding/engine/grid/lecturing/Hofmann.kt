@@ -1,6 +1,7 @@
 package lastprofstanding.engine.grid.lecturing
 
 import lastprofstanding.engine.grid.*
+import java.io.File
 import kotlin.math.E
 import kotlin.math.PI
 import kotlin.math.pow
@@ -22,6 +23,7 @@ class Hofmann : Lecturer("Hofmann", 0.1f, Weakness(StroetmannMinion::class, 2, 2
             Pair(GridPosition(2, 2), HofmannMinion()),
         )
     }
+
 
     override fun checkIfDying(grid: Grid, position: GridPosition): Boolean {
         val mean = 3.5

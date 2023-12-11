@@ -95,24 +95,35 @@ open class Cell(
     }
 
 
-    private fun checkMovementDirection(grid: Grid, position: GridPosition, direction: MovementDirection): Boolean {
-        return grid.get(position + direction.getPositionDelta())?.passable ?: false
+    private fun checkMovementDirection(grid: Grid, position: GridPosition, direction: MovementDirection, distance: Int): Boolean {
+        return grid.get(position + direction.getPositionDelta() * distance)?.passable ?: false
     }
 
-    private fun getMovementDirection(grid: Grid, position: GridPosition): MovementDirection {
-        val nextCellNotPassable = grid.get(position + currentMovement.getPositionDelta())?.passable != true
-        if (nextCellNotPassable || (straightMovementCounter % 8 == 0)) {
-            if (checkMovementDirection(grid, position, currentMovement.turnRight())) {
-                return currentMovement.turnRight()
+
+    private fun getMovementDirection(grid: Grid, position: GridPosition, distance: Int): MovementDirection {
+        val directionsToTry = MovementDirection.entries.toMutableList()
+
+        while (directionsToTry.isNotEmpty()) {
+            val randomIndex = (0 until directionsToTry.size).random()
+            val directionToTry = directionsToTry[randomIndex]
+
+            if (checkMovementDirection(grid, position, directionToTry,distance)) {
+                return directionToTry
+            } else {
+                directionsToTry.removeAt(randomIndex)
             }
         }
-        return currentMovement
+
+        // If all directions are blocked, return the current movement to stay in place
+        return MovementDirection.STAY
     }
 
     fun getMovementData(grid: Grid, position: GridPosition): GridPosition {
-        val movementDirection = getMovementDirection(grid, position)
+
+        val distance = getConcreteStepFromContinuousValue(movementSpeed)
+        val movementDirection = getMovementDirection(grid, position,distance)
         currentMovement = movementDirection
-        return position + movementDirection.getPositionDelta() * getConcreteStepFromContinuousValue(movementSpeed)
+        return position + movementDirection.getPositionDelta() * distance
     }
 
     fun evaluateWhetherLifetimeOver(): Boolean {
