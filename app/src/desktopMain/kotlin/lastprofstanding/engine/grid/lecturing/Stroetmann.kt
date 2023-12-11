@@ -2,7 +2,7 @@ package lastprofstanding.engine.grid.lecturing
 
 import lastprofstanding.engine.grid.*
 
-class Stroetmann: Lecturer("Stroetmann",1.1f,Weakness(KruseMinion::class,5,3),4f) {
+class Stroetmann : Lecturer("Stroetmann", 1.1f, Weakness(KruseMinion::class, 5, 3), 8f) {
     override val textRepresentation = "S"
     override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern? {
         return createSpawnPattern(
