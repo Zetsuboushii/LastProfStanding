@@ -84,6 +84,9 @@ fun App() {
             engineState.tileGrid.draw(0f, 0, false)
             engineState.dataGrid.draw(1f, -engineState.tileGrid.rowCount * 16, editMode)
         }
+        Column {
+            Text(engineState.dataGrid.getTextRepresentation())
+        }
     }
 }
 
