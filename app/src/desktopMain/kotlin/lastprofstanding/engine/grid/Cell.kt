@@ -2,10 +2,16 @@ package lastprofstanding.engine.grid
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.loadImageBitmap
 import lastprofstanding.engine.Ability
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import lastprofstanding.engine.MovementDirection
 import lastprofstanding.engine.Strength
 import java.io.File
@@ -49,7 +55,7 @@ open class Cell(
     }
 
     open fun getFile(): File? {
-        return null
+        return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/air.png")
     }
 
     @Composable
@@ -62,10 +68,32 @@ open class Cell(
             Image(
                 painter = it,
                 contentDescription = null,
-                contentScale = ContentScale.FillHeight
+                Modifier.size(16.dp),
             )
         }
     }
+
+    @Composable
+    open fun drawInEditMode() {
+        getFile()?.let { file ->
+            loadImageBitmap(file.inputStream())
+        }?.let {
+            BitmapPainter(image = it)
+        }?.let {
+            val editColor = if (this.passable) {
+                Color.Green
+            } else {
+                Color.Red
+            }
+            Image(
+                painter = it,
+                contentDescription = null,
+                Modifier.size(16.dp),
+                colorFilter = ColorFilter.tint(editColor, blendMode = BlendMode.Darken)
+            )
+        }
+    }
+
 
     open fun clone(): Cell {
         return Cell(passable, movementSpeed, lifetime, weakness, strength, spawnRate).apply {

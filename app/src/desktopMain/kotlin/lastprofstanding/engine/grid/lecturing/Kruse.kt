@@ -3,7 +3,7 @@ package lastprofstanding.engine.grid.lecturing
 import lastprofstanding.engine.grid.*
 import java.io.File
 
-class Kruse : Lecturer("Kruse", 1.3f, Weakness(HofmannMinion::class, 10, 5), null) {
+class Kruse : Lecturer("Kruse", 1.3f, Weakness(HofmannMinion::class, 10, 5), 4f) {
     override val textRepresentation = "K"
 
     override fun getFile(): File {
