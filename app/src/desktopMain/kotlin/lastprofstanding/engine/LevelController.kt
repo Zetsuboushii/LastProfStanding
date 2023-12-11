@@ -1,8 +1,12 @@
 package lastprofstanding.engine
 
 import lastprofstanding.engine.grid.Grid
+import lastprofstanding.engine.grid.GridPosition
 import lastprofstanding.engine.grid.Tile
 import lastprofstanding.engine.grid.TileType
+import lastprofstanding.engine.grid.lecturing.Hofmann
+import lastprofstanding.engine.grid.lecturing.Kruse
+import lastprofstanding.engine.grid.lecturing.Stroetmann
 
 class LevelController {
     data class Level(val tileGrid: Grid, val dataGrid: Grid)
@@ -17,6 +21,7 @@ class LevelController {
             val dataGrid = Grid(tileMap.map { row ->
                 row.map { tile -> tile.generateDataCell() }
             })
+
             return Level(tileGrid, dataGrid)
         }
 
