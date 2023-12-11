@@ -5,7 +5,6 @@ import lastprofstanding.engine.grid.Cell
 class Ability(
     val movementSpeedMultiplier: Float,
     val spawnRateMultiplier: Float?,
-    sound: Sound.SoundFile?,
     val spawnedCellMovementSpeedMultiplier: Float
 ) {
     fun apply(cell: Cell) {
