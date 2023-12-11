@@ -2,7 +2,7 @@ package lastprofstanding.engine.grid
 
 import java.io.File
 
-class Tile(var tileType: TileType) : Cell(true, 0f, null, null, null) {
+class Tile(var tileType: TileType) : Cell(true, 0f, null, null, null, null) {
     override val textRepresentation = "T"
 
     override fun getFile(): File {

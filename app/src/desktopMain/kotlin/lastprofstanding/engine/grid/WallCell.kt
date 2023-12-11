@@ -1,6 +1,6 @@
 package lastprofstanding.engine.grid
 
-class WallCell : Cell(false, 0f, null, null, null) {
+class WallCell : Cell(false, 0f, null, null, null, null) {
     override val textRepresentation = "X"
 
     override fun clone(): WallCell {
