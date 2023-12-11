@@ -38,7 +38,7 @@ class Sound {
                 backgroundClips.add(clip)
             }
         } catch (exception: Exception) {
-            print("Sound error: ${exception.localizedMessage}")
+            print("Sound error: $exception - ${exception.localizedMessage}")
         }
     }
 

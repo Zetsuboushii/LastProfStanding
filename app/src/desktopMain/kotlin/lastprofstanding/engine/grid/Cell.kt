@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.loadImageBitmap
+import lastprofstanding.engine.Ability
 import androidx.compose.ui.unit.dp
 import lastprofstanding.engine.MovementDirection
 import java.io.File
@@ -27,6 +28,7 @@ open class Cell(
     var currentMovement = MovementDirection.LEFT
     var straightMovementCounter = 1
     var stepsSurvived = 1
+    val activeAbility: Ability? = null
 
     companion object {
         /**
@@ -71,6 +73,10 @@ open class Cell(
             straightMovementCounter = this@Cell.straightMovementCounter
             stepsSurvived = this@Cell.stepsSurvived
         }
+    }
+
+    open fun checkIfDying(grid: Grid, position: GridPosition): Boolean {
+        return false
     }
 
     /**
