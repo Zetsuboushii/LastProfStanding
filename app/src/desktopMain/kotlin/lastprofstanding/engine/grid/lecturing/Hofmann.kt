@@ -1,6 +1,7 @@
 package lastprofstanding.engine.grid.lecturing
 
 import lastprofstanding.engine.grid.*
+import java.io.File
 import kotlin.math.E
 import kotlin.math.PI
 import kotlin.math.pow
@@ -21,6 +22,10 @@ class Hofmann : Lecturer("Hofmann", 0.1f, Weakness(StroetmannMinion::class, 2, 2
             Pair(GridPosition(0, 2), HofmannMinion()),
             Pair(GridPosition(2, 2), HofmannMinion()),
         )
+    }
+
+    override fun getFile(): File {
+        return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/hofmann.png")
     }
 
     override fun checkIfDying(grid: Grid, position: GridPosition): Boolean {

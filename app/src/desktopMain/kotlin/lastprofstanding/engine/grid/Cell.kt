@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.loadImageBitmap
 import lastprofstanding.engine.Ability
 import androidx.compose.ui.unit.dp
@@ -62,7 +63,7 @@ open class Cell(
             Image(
                 painter = it,
                 contentDescription = null,
-                Modifier.size(16.dp)
+                contentScale = ContentScale.FillHeight
             )
         }
     }
