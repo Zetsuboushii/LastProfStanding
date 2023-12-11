@@ -21,7 +21,12 @@ class LevelController {
             val dataGrid = Grid(tileMap.map { row ->
                 row.map { tile -> tile.generateDataCell() }
             })
-
+            // TODO: Remove
+            dataGrid.apply {
+                replace(GridPosition(0, 3), Hofmann())
+                replace(GridPosition(1, 10), Stroetmann())
+                replace(GridPosition(7, 6), Kruse())
+            }
             return Level(tileGrid, dataGrid)
         }
 

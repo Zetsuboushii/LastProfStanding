@@ -1,7 +1,6 @@
 package lastprofstanding.engine.grid
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
@@ -14,6 +13,7 @@ import lastprofstanding.engine.Ability
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import lastprofstanding.engine.MovementDirection
+import lastprofstanding.engine.Strength
 import java.io.File
 import kotlin.reflect.KClass
 
@@ -25,6 +25,7 @@ open class Cell(
     var movementSpeed: Float,
     val lifetime: Int?,
     val weakness: Weakness<*>?,
+    val strength: Strength<*>?,
     var spawnRate: Float?
 
 ) {
@@ -95,7 +96,7 @@ open class Cell(
 
 
     open fun clone(): Cell {
-        return Cell(passable, movementSpeed, lifetime, weakness, spawnRate).apply {
+        return Cell(passable, movementSpeed, lifetime, weakness, strength, spawnRate).apply {
             currentMovement = this@Cell.currentMovement
             straightMovementCounter = this@Cell.straightMovementCounter
             stepsSurvived = this@Cell.stepsSurvived
