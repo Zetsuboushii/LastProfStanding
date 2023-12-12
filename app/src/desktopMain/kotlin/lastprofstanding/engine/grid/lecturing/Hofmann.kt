@@ -8,7 +8,15 @@ class Hofmann : Lecturer("Hofmann", 0.1f, Weakness(StroetmannMinion::class, 2, 2
     override val textRepresentation = "H"
 
     override fun clone(): Cell {
-        return Hofmann().apply { set(stepsSurvived, currentMovement, movementSpeed, spawnRate, activeAbility) }
+        return Hofmann().apply {
+            set(
+                this@Hofmann.stepsSurvived,
+                this@Hofmann.currentMovement,
+                this@Hofmann.movementSpeed,
+                this@Hofmann.spawnRate,
+                this@Hofmann.activeAbility
+            )
+        }
     }
 
     override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern {

@@ -103,19 +103,25 @@ class Engine private constructor() {
                 val position = GridPosition(x, y)
                 previous.get(position)?.let { cell: Cell ->
                     spawnNewCellsForCell(cell, position)
-                    moveCellAppropriately(cell, position)
+                    val newPosition = moveCellAppropriately(cell, position)
                     stats += eliminateCellIfLifetimeOver(cell, position)
                     stats += eliminateCellIfDying(cell, position)
                     stats += evaluateWeakness(cell, position)
                     stats += fight(cell, position)
-                    current.get(position)?.apply {
-                        stepsSurvived += 1
-                    }
 
                 }
             }
         }
+        for (x in 0 until previous.columnCount) {
+            for (y in 0 until previous.rowCount) {
+                current.get(GridPosition(x, y))?.apply {
+                    stepsSurvived += 1
+                }
+            }
+        }
+
         previous = current.clone()
+
         return StatsCounter(0f, 0) // TODO: Update stats counter in step
     }
 
@@ -155,9 +161,10 @@ class Engine private constructor() {
         }
     }
 
-    private fun moveCellAppropriately(cell: Cell, position: GridPosition) {
+    private fun moveCellAppropriately(cell: Cell, position: GridPosition): GridPosition {
         val newPos = cell.getMovementData(previous, position)
         moveCellIfPossible(cell, position, newPos)
+        return newPos
     }
 
     /**

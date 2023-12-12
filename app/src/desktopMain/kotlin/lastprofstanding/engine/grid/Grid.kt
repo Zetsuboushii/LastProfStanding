@@ -70,16 +70,12 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
     }
 
     public override fun clone(): Grid {
-        return Grid(grid).apply {
-            for (x in 0 until columnCount) {
-                for (y in 0 until rowCount) {
-                    val position = GridPosition(x, y)
-                    this@Grid.get(position)?.let {
-                        replace(position, it.clone())
-                    }
-                }
+        val new = grid.map { col ->
+            col.map { cell ->
+                cell.clone()
             }
         }
+        return Grid(new)
     }
 }
 

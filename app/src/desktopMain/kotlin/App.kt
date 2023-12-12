@@ -35,7 +35,7 @@ fun App() {
     var didResetGrid by remember { mutableStateOf(false) }
     var editMode by remember { mutableStateOf(false) }
     var paused by remember { mutableStateOf(true) }
-    val scale by remember { mutableIntStateOf(8) }
+    val scale by remember { mutableIntStateOf(4) }
     var spedUp by remember { mutableStateOf(false) }
     var buttonSelect by remember { mutableStateOf(false) }
     var editSelect: Lecturer? = null

@@ -9,7 +9,15 @@ class HofmannMinion : Cell(false, 0.5f, 20, null, null, null) {
     }
 
     override fun clone(): Cell {
-        return HofmannMinion().apply { set(stepsSurvived, currentMovement, movementSpeed, spawnRate, activeAbility) }
+        return HofmannMinion().apply {
+            set(
+                this@HofmannMinion.stepsSurvived,
+                this@HofmannMinion.currentMovement,
+                this@HofmannMinion.movementSpeed,
+                this@HofmannMinion.spawnRate,
+                this@HofmannMinion.activeAbility
+            )
+        }
     }
 
     override val textRepresentation = "e"
