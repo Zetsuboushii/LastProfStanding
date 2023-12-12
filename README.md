@@ -31,7 +31,7 @@ Zu Beginn das Projekt klonen und folgende Befehle ausführen:
 ## Ausführen der Applikation
 
 ```
-...
+gradle run
 ```
 
 ## Dokumentation
