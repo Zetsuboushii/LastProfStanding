@@ -5,7 +5,6 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -22,14 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import kotlinx.coroutines.launch
 import lastprofstanding.engine.*
-import lastprofstanding.engine.grid.Cell
 import lastprofstanding.engine.grid.Grid
 import lastprofstanding.engine.grid.GridPosition
 import lastprofstanding.engine.grid.lecturing.*
 import java.io.File
 
 @Composable
-fun App() {
+fun SimulationView(routeProvider: RouteCallback) {
     val engine by remember { mutableStateOf(Engine.getInstance()) }
     var engineState by remember { mutableStateOf(EngineState(Grid(0, 0), Grid(0, 0), StatsCounter())) }
     var didResetGrid by remember { mutableStateOf(false) }
@@ -248,14 +246,6 @@ fun App() {
 
                 Button(
                     onClick = {
-                        //TODO Invoke End
-                    },
-                    contentPadding = PaddingValues(0.dp),
-                    modifier = buttonModifier
-                ) { putIcon("stop") }
-
-                Button(
-                    onClick = {
                         engine.stopSimulation()
                         engineState = engine.state
                         editMode = !editMode
@@ -265,6 +255,14 @@ fun App() {
                     contentPadding = PaddingValues(0.dp),
                     modifier = buttonModifier
                 ) { putIcon("build") }
+
+                Button(
+                    onClick = {
+                        routeProvider.invoke(NavController.Route.END_SCREEN, engine.state)
+                    },
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = buttonModifier
+                ) { putIcon("stop") }
             }
         }
 

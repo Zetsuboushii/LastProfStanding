@@ -24,7 +24,7 @@ fun MainView() {
             }
 
             NavController.Route.GAME_SCREEN -> {
-                GameView(routeCallback)
+                SimulationView(routeCallback)
             }
 
             NavController.Route.END_SCREEN -> {
