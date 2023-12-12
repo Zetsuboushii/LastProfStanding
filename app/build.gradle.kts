@@ -22,6 +22,7 @@ kotlin {
             implementation(compose.material)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
+            implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
         }
     }
 }

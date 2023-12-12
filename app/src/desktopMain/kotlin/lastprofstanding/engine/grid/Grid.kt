@@ -1,5 +1,9 @@
 package lastprofstanding.engine.grid
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
@@ -42,15 +46,15 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
     }
 
     @Composable
-    fun draw(zIndex: Float, yOffset: Int, editMode: Boolean) {
-        Row(
-            Modifier.zIndex(zIndex).offset(0.dp, yOffset.dp)
-        ) {
-            for (col in grid.indices) {
-                Column {
-                    for (cell in grid[col]) {
-                        if (editMode) cell.drawInEditMode() else cell.draw()
-                    }
+    fun draw(zIndex: Float, yOffset: Int, scale: Int, editMode: Boolean) {
+        for (row in grid.indices) {
+            Row(
+                modifier = Modifier
+                    .zIndex(zIndex)
+                    .graphicsLayer { translationY = yOffset.dp.toPx() }
+            ) {
+                for (cell in grid[row]) {
+                    if (editMode) cell.drawInEditMode(scale) else cell.draw(scale)
                 }
             }
         }

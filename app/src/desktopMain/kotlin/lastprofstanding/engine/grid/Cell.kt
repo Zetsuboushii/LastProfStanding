@@ -7,12 +7,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.loadImageBitmap
-import lastprofstanding.engine.Ability
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
+import lastprofstanding.engine.Ability
 import lastprofstanding.engine.MovementDirection
 import lastprofstanding.engine.Strength
 import java.io.File
@@ -59,7 +58,7 @@ abstract class Cell(
     }
 
     @Composable
-    open fun draw() {
+    open fun draw(scale: Int) {
         getFile()?.let { file ->
             loadImageBitmap(file.inputStream())
         }?.let {
@@ -68,13 +67,13 @@ abstract class Cell(
             Image(
                 painter = it,
                 contentDescription = null,
-                Modifier.size(16.dp),
+                modifier = Modifier.size(scale.dp)
             )
         }
     }
 
     @Composable
-    open fun drawInEditMode() {
+    open fun drawInEditMode(scale: Int) {
         getFile()?.let { file ->
             loadImageBitmap(file.inputStream())
         }?.let {
@@ -88,8 +87,10 @@ abstract class Cell(
             Image(
                 painter = it,
                 contentDescription = null,
-                Modifier.size(16.dp),
-                colorFilter = ColorFilter.tint(editColor, blendMode = BlendMode.Darken)
+                colorFilter = ColorFilter.tint(editColor, blendMode = BlendMode.Darken),
+                modifier = Modifier
+                    .size(scale.dp)
+                    .graphicsLayer { this.alpha = 0.785f }
             )
         }
     }
