@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -16,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -46,18 +49,16 @@ fun App() {
         Pair(Hofmann(), HofmannMinion())
     )
 
-    Row {
+    Row(modifier = Modifier.background(Color.Gray)) {
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxHeight()
                 .width(300.dp)
-                .background(Color.Green)
                 .padding(5.dp)
         ) {
             Column(
                 modifier = Modifier
-                    .background(Color.Blue)
                     .fillMaxWidth()
             ) {
                 if (editMode) {
@@ -66,8 +67,10 @@ fun App() {
                             .fillMaxWidth()
                             .padding(25.dp)
                             .wrapContentWidth()
-                            .background(Color.Magenta)
                     ) {
+                        item {
+                            Text("Select a Lecturer", style = TextStyle(fontWeight = FontWeight.Bold))
+                        }
                         items(lecturers) {
                             var buttonSelect by remember { mutableStateOf(false) }
                             Button(
@@ -111,6 +114,7 @@ fun App() {
                                     Text(it.first.name, textAlign = TextAlign.Center)
                                 }
                             }
+                            Spacer(modifier = Modifier.size(8.dp))
                         }
                     }
                 }
@@ -121,7 +125,6 @@ fun App() {
                     .fillMaxWidth()
                     .padding(10.dp)
                     .wrapContentWidth()
-                    .background(Color.Cyan)
                     .height(40.dp)
                     .weight(1f, false)
             ) {
@@ -183,6 +186,23 @@ fun App() {
                 }
                 Button(
                     onClick = {
+                        //TODO Invoke End
+                    },
+                    modifier = Modifier.padding(start = 10.dp)
+                ) {
+                    Icon(
+                        painter = BitmapPainter(
+                            loadImageBitmap(
+                                File(
+                                    "src/desktopMain/kotlin/lastprofstanding/res/icons/stop.png"
+                                ).inputStream()
+                            )
+                        ),
+                        contentDescription = null,
+                    )
+                }
+                Button(
+                    onClick = {
                         editMode = !editMode
                     },
                     modifier = Modifier.padding(start = 10.dp)
@@ -208,7 +228,6 @@ fun App() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Transparent)
                 .verticalScroll(verticalScrollState)
                 .horizontalScroll(horizontalScrollState)
                 .draggable(
@@ -230,13 +249,6 @@ fun App() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // TODO: Remove
-            //engineState.dataGrid.apply {
-            //    replace(GridPosition(2, 11), Hofmann())
-            //    replace(GridPosition(9, 2), Stroetmann())
-            //    replace(GridPosition(5, 7), Kruse())
-            //}
-
             //TODO: Scaling :/
             /*
             when (input) {
@@ -249,7 +261,7 @@ fun App() {
                     2 -> scale = 1
                 }
             }
-             */
+            */
 
             //engineState.tileGrid.get(GridPosition(0, 0))?.passable
             //Text(engineState.dataGrid.getTextRepresentation())
@@ -266,4 +278,3 @@ fun App() {
         }
     }
 }
-
