@@ -9,8 +9,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 
 class Grid(grid: List<List<Cell>>) : Cloneable {
-    val rowCount: Int = grid.size
-    val columnCount: Int = grid.getOrNull(0)?.size ?: 0
+    val rowCount: Int = grid.getOrNull(0)?.size ?: 0
+    val columnCount: Int = grid.size
     var grid = grid.map { row -> row.toMutableList() }.toMutableList()
 
     constructor(
