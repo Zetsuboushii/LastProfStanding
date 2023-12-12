@@ -1,18 +1,11 @@
 package lastprofstanding.engine.grid
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.loadImageBitmap
-import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import lastprofstanding.engine.grid.lecturing.Lecturer
-import java.io.File
 
 class Grid(grid: List<List<Cell>>) : Cloneable {
     val rowCount: Int = grid.size
@@ -48,15 +41,15 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
     }
 
     @Composable
-    fun draw(zIndex: Float, yOffset: Int, editMode: Boolean) {
-        Column(
-            Modifier.zIndex(zIndex).offset(0.dp, yOffset.dp)
-        ) {
-            for (row in grid.indices) {
-                Row {
-                    for (cell in grid[row]) {
-                        if (editMode) cell.drawInEditMode() else cell.draw()
-                    }
+    fun draw(zIndex: Float, yOffset: Int, scale: Int, editMode: Boolean) {
+        for (row in grid.indices) {
+            Row(
+                modifier = Modifier
+                    .zIndex(zIndex)
+                    .graphicsLayer { translationY = yOffset.dp.toPx() }
+            ) {
+                for (cell in grid[row]) {
+                    if (editMode) cell.drawInEditMode(scale) else cell.draw(scale)
                 }
             }
         }
