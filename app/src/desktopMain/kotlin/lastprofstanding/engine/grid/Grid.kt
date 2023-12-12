@@ -68,7 +68,7 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
     }
 
     public override fun clone(): Grid {
-        return Grid(rowCount, columnCount).apply {
+        return Grid(grid).apply {
             for (x in 0 until columnCount) {
                 for (y in 0 until rowCount) {
                     val position = GridPosition(x, y)
