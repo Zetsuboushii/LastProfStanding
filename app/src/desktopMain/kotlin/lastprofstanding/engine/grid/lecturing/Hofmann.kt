@@ -2,10 +2,7 @@ package lastprofstanding.engine.grid.lecturing
 
 import lastprofstanding.engine.grid.*
 import java.io.File
-import kotlin.math.E
-import kotlin.math.PI
 import kotlin.math.pow
-import kotlin.math.sqrt
 
 class Hofmann : Lecturer("Hofmann", 0.1f, Weakness(StroetmannMinion::class, 2, 2), null, 16f) {
     override val textRepresentation = "H"
@@ -33,14 +30,10 @@ class Hofmann : Lecturer("Hofmann", 0.1f, Weakness(StroetmannMinion::class, 2, 2
     }
 
     override fun checkIfDying(grid: Grid, position: GridPosition): Boolean {
-        val mean = 3.5
-        val stdDev = 1.5
-        val t = stepsSurvived / 60.0 // as 1X = 1 step/sec
-        val probability = -2 * (t - mean) / (stdDev.pow(3) * sqrt(PI)) * E.pow(-((t - mean) / stdDev).pow(2))
-        return if (Math.random() <= probability) {
-            true
-        } else {
-            false
-        }
+        val meanLifetime = 210 // ticks (secs at 1x)
+        // (1 - p)^mean = 0.5
+        // => p = 1 - 1/(2^(1/mean))
+        val probability = 1 - 1 / 2.0.pow(1.0 / meanLifetime)
+        return Math.random() <= probability
     }
 }
