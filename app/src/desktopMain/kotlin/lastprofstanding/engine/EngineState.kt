@@ -2,4 +2,4 @@ package lastprofstanding.engine
 
 import lastprofstanding.engine.grid.Grid
 
-data class EngineState(val dataGrid: Grid, val tileGrid: Grid, val stats: StatsCounter)
+data class EngineState(val spriteLayer: Grid, val tileLayer: Grid, val stats: StatsCounter)

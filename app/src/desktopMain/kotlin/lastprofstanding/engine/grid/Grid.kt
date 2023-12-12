@@ -1,15 +1,5 @@
 package lastprofstanding.engine.grid
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.offset
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-
 class Grid(grid: List<List<Cell>>) : Cloneable {
     val rowCount: Int = grid.getOrNull(0)?.size ?: 0
     val columnCount: Int = grid.size
@@ -43,20 +33,21 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
         replace(position, EmptyCell())
     }
 
-    @Composable
-    fun draw(zIndex: Float, yOffset: Int, scale: Int, editMode: Boolean) {
-        for (row in grid.indices) {
-            Row(
-                modifier = Modifier
-                    .zIndex(zIndex)
-                    .graphicsLayer { translationY = yOffset.dp.toPx() }
-            ) {
-                for (cell in grid[row]) {
-                    if (editMode) cell.drawInEditMode(scale) else cell.draw(scale)
-                }
-            }
-        }
-    }
+    // TODO Remove
+    // @Composable
+    // fun draw(zIndex: Float, yOffset: Int, scale: Int, editMode: Boolean) {
+    //     for (column in grid.indices) {
+    //         Row (
+    //             modifier = Modifier
+    //                 .zIndex(zIndex)
+    //                 .graphicsLayer { translationY = yOffset.dp.toPx() }
+    //         ) {
+    //             for (cell in grid[column]) {
+    //                 if (editMode) cell.drawInEditMode(scale) else cell.draw(scale)
+    //             }
+    //         }
+    //     }
+    // }
 
     fun getTextRepresentation(): String {
         var output = ""
