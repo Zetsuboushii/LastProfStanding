@@ -34,7 +34,7 @@ fun SimulationView(routeProvider: RouteCallback) {
     var engineState by remember { mutableStateOf(EngineState(Grid(0, 0), Grid(0, 0), StatsCounter())) }
     var didResetGrid by remember { mutableStateOf(false) }
 
-    val scale by remember { mutableIntStateOf(2) }
+    var scale by remember { mutableIntStateOf(2) }
 
     var editing by remember { mutableStateOf(false) }
     var spedUp by remember { mutableStateOf(false) }
@@ -211,7 +211,7 @@ fun SimulationView(routeProvider: RouteCallback) {
                         }
                     },
                     contentPadding = PaddingValues(0.dp),
-                    modifier = buttonModifier
+                    modifier = Modifier.width(40.dp)
                 ) { if (paused) putIcon("play") else putIcon("pause") }
 
                 if (!paused) {
@@ -285,6 +285,29 @@ fun SimulationView(routeProvider: RouteCallback) {
                     contentPadding = PaddingValues(0.dp),
                     modifier = buttonModifier
                 ) { putIcon("stop") }
+
+                Button(
+                    onClick = {
+                        when (scale) {
+                            1 -> scale = 2
+                            2 -> scale = 4
+                            4 -> scale = 8
+                        }
+                    },
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = buttonModifier
+                ) { putIcon("zoom_in") }
+                Button(
+                    onClick = {
+                        when (scale) {
+                            8 -> scale = 4
+                            4 -> scale = 2
+                            2 -> scale = 1
+                        }
+                    },
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = buttonModifier
+                ) { putIcon("zoom_out") }
             }
         }
 
