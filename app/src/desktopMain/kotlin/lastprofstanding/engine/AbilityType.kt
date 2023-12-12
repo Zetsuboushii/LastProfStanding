@@ -8,7 +8,6 @@ enum class AbilityType {
     MINION_SPEED_UP,
     MINION_SPEED_DOWN;
 
-
     fun getAbility(): Ability {
         return when (this) {
             SPEED_UP -> Ability(1.25f, 1f, 1f)
