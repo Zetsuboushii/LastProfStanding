@@ -10,7 +10,9 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.loadImageBitmap
@@ -31,13 +33,17 @@ fun SimulationView(routeProvider: RouteCallback) {
     val engine by remember { mutableStateOf(Engine.getInstance()) }
     var engineState by remember { mutableStateOf(EngineState(Grid(0, 0), Grid(0, 0), StatsCounter())) }
     var didResetGrid by remember { mutableStateOf(false) }
-    var editMode by remember { mutableStateOf(false) }
-    var paused by remember { mutableStateOf(true) }
-    val scale by remember { mutableIntStateOf(4) }
+
+    val scale by remember { mutableIntStateOf(2) }
+
+    var editing by remember { mutableStateOf(false) }
     var spedUp by remember { mutableStateOf(false) }
-    var buttonSelect by remember { mutableStateOf(false) }
-    var editSelect: Lecturer? = null
-    var abilitySelect: AbilityType? = null
+    var paused by remember { mutableStateOf(true) }
+
+    var lecturerSelectButtonState by remember { mutableStateOf(false) }
+    var lecturerSelected: Lecturer? = null
+    var abilitySelectButtonState by remember { mutableStateOf(false) }
+    var abilitySelected: AbilityType? = null
 
     if (!didResetGrid) {
         engine.load(LevelType.BASIC)
@@ -47,17 +53,17 @@ fun SimulationView(routeProvider: RouteCallback) {
 
     val lecturers = listOf(
         Pair(Kruse(), KruseMinion()),
-        Pair(Stroetmann(), StroetmannMinion()),
-        Pair(Hofmann(), HofmannMinion())
+        Pair(Hofmann(), HofmannMinion()),
+        Pair(Stroetmann(), StroetmannMinion())
     )
 
     val abilities = listOf(
-        AbilityType.SPEED_UP,
-        AbilityType.SPEED_DOWN,
-        AbilityType.SPAWN_RATE_UP,
-        AbilityType.SPAWN_RATE_DOWN,
-        AbilityType.MINION_SPEED_UP,
-        AbilityType.MINION_SPEED_DOWN
+        Pair(AbilityType.SPEED_UP, "Speed Up"),
+        Pair(AbilityType.SPEED_DOWN, "Speed Down"),
+        Pair(AbilityType.SPAWN_RATE_UP, "Spawn Rate Up"),
+        Pair(AbilityType.SPAWN_RATE_DOWN, "Spawn Rate Down"),
+        Pair(AbilityType.MINION_SPEED_UP, "Minion Speed Up"),
+        Pair(AbilityType.MINION_SPEED_DOWN, "Minion Speed Down")
     )
 
     Row {
@@ -69,52 +75,9 @@ fun SimulationView(routeProvider: RouteCallback) {
                 .background(Color.Gray)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
-                if (paused && !editMode) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(25.dp)
-                            .wrapContentWidth()
-                    ) {
-                        item {
-                            Text("Apply an Ability", style = TextStyle(fontWeight = FontWeight.Bold))
-                        }
-                        items(abilities) {
-                            OutlinedButton(
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = if (buttonSelect || !paused) {
-                                        Color.DarkGray
-                                    } else {
-                                        Color.LightGray
-                                    }
-                                ),
-                                modifier = Modifier
-                                    .width(250.dp),
-                                onClick = {
-                                    buttonSelect = !buttonSelect
-                                    abilitySelect = if (abilitySelect == null) {
-                                        it
-                                    } else {
-                                        null
-                                    }
-                                },
-                                enabled = (abilitySelect == null || abilitySelect == it) && paused
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(start = 10.dp)
-                                ) {
-                                    Text(it.name, textAlign = TextAlign.Center)
-                                }
-                            }
-                            Spacer(modifier = Modifier.size(8.dp))
-                        }
-                    }
-                }
-
-                if (editMode) {
+                if (editing) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -127,7 +90,7 @@ fun SimulationView(routeProvider: RouteCallback) {
                         items(lecturers) {
                             Button(
                                 colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = if (buttonSelect) {
+                                    backgroundColor = if (lecturerSelectButtonState) {
                                         Color.DarkGray
                                     } else {
                                         Color.LightGray
@@ -136,14 +99,14 @@ fun SimulationView(routeProvider: RouteCallback) {
                                 modifier = Modifier
                                     .width(250.dp),
                                 onClick = {
-                                    buttonSelect = !buttonSelect
-                                    editSelect = if (editSelect == null) {
+                                    lecturerSelectButtonState = !lecturerSelectButtonState
+                                    lecturerSelected = if (lecturerSelected == null) {
                                         it.first
                                     } else {
                                         null
                                     }
                                 },
-                                enabled = editSelect == null || editSelect == it.first
+                                enabled = lecturerSelected == null || lecturerSelected == it.first
                             ) {
                                 Row {
                                     Image(
@@ -175,6 +138,48 @@ fun SimulationView(routeProvider: RouteCallback) {
                         }
                     }
                 }
+
+                if (paused && !editing) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(25.dp)
+                            .wrapContentWidth()
+                    ) {
+                        item {
+                            Text("Apply an Ability", style = TextStyle(fontWeight = FontWeight.Bold))
+                        }
+                        items(abilities) {
+                            OutlinedButton(
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = if (abilitySelectButtonState && paused) {
+                                        Color.DarkGray
+                                    } else {
+                                        Color.LightGray
+                                    }
+                                ),
+                                modifier = Modifier
+                                    .width(250.dp),
+                                onClick = {
+                                    abilitySelectButtonState = !abilitySelectButtonState
+                                    abilitySelected = if (abilitySelected == null) {
+                                        it.first
+                                    } else {
+                                        null
+                                    }
+                                },
+                                enabled = (abilitySelected == null || abilitySelected == it.first) && paused
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(start = 10.dp)
+                                ) {
+                                    Text(it.second, textAlign = TextAlign.Center)
+                                }
+                            }
+                            Spacer(modifier = Modifier.size(8.dp))
+                        }
+                    }
+                }
             }
 
             Row(
@@ -197,6 +202,7 @@ fun SimulationView(routeProvider: RouteCallback) {
                             }
                             paused = !paused
                             spedUp = false
+                            abilitySelectButtonState = false
                         } else {
                             engine.stopSimulation()
                             engineState = engine.state
@@ -218,11 +224,19 @@ fun SimulationView(routeProvider: RouteCallback) {
                                 }
                                 spedUp = !spedUp
                                 paused = false
+                                lecturerSelected = null
+                                lecturerSelectButtonState = false
+                                abilitySelected = null
+                                abilitySelectButtonState = false
                             } else {
                                 engine.stopSimulation()
                                 engineState = engine.state
                                 spedUp = !spedUp
                                 paused = false
+                                lecturerSelected = null
+                                lecturerSelectButtonState = false
+                                abilitySelected = null
+                                abilitySelectButtonState = false
                             }
                         },
                         contentPadding = PaddingValues(0.dp),
@@ -239,6 +253,10 @@ fun SimulationView(routeProvider: RouteCallback) {
                         engineState = engine.state
                         spedUp = false
                         paused = true
+                        lecturerSelected = null
+                        lecturerSelectButtonState = false
+                        abilitySelected = null
+                        abilitySelectButtonState = false
                     },
                     contentPadding = PaddingValues(0.dp),
                     modifier = buttonModifier
@@ -248,9 +266,13 @@ fun SimulationView(routeProvider: RouteCallback) {
                     onClick = {
                         engine.stopSimulation()
                         engineState = engine.state
-                        editMode = !editMode
+                        editing = !editing
                         paused = true
                         spedUp = false
+                        lecturerSelected = null
+                        lecturerSelectButtonState = false
+                        abilitySelected = null
+                        abilitySelectButtonState = false
                     },
                     contentPadding = PaddingValues(0.dp),
                     modifier = buttonModifier
@@ -294,93 +316,110 @@ fun SimulationView(routeProvider: RouteCallback) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            //TODO: Scaling :/
             /*
-            when (input) {
-                "+" -> when (scale) {
-                    1 -> scale = 2
-                    2 -> scale = 4
-                }
-                "-" -> when (scale) {
-                    4 -> scale = 2
-                    2 -> scale = 1
-                }
-            }
-            */
-
-            engineState.tileGrid.draw(-1f, 0, 16 * scale, false)
-            engineState.dataGrid.draw(
-                1f,
-                -engineState.tileGrid.rowCount * 16 * scale + 16 * scale,
-                16 * scale,
-                editMode
-            )
-
-            if (editMode) {
-                val editGrid = engineState.dataGrid.clone()
-                for (row in editGrid.grid.indices) {
-                    Row(
-                        modifier = Modifier
-                            .zIndex(2f)
-                            .graphicsLayer {
-                                translationY =
-                                    ((-engineState.tileGrid.rowCount * 16 * scale + 16 * scale) * 2).dp.toPx()
-                            }
-                    ) {
-                        for (cell in editGrid.grid[row].indices) {
-                            Button(
-                                modifier = Modifier
-                                    .size((16 * scale).dp),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                                onClick = {
-                                    if (editSelect != null && engineState.dataGrid.get(
-                                            GridPosition(
-                                                row,
-                                                cell
-                                            )
-                                        )!!.passable
-                                    ) {
-                                        engineState.dataGrid.apply { replace(GridPosition(row, cell), editSelect!!) }
-                                        engine.stopSimulation()
-                                        engineState = engine.state
-                                        paused = true
-                                        spedUp = false
-                                        editMode = false
-                                    }
-                                }
-                            ) { }
+             TILE AND SPRITE RENDERING
+             */
+            for (column in engineState.tileLayer.grid.indices) {
+                Row {
+                    for (row in engineState.tileLayer.grid[column].indices) {
+                        val editModifier = if (editing) {
+                            Modifier
+                                .size((16 * scale).dp)
+                                .zIndex(1f)
+                                .graphicsLayer { this.alpha = 0.75f }
+                        } else {
+                            Modifier
+                                .size((16 * scale).dp)
+                                .zIndex(1f)
                         }
-                    }
-                }
-            }
-
-            if (paused) {
-                for (row in engineState.dataGrid.grid.indices) {
-                    Row(
-                        modifier = Modifier
-                            .zIndex(2f)
-                            .graphicsLayer {
-                                translationY =
-                                    ((-engineState.tileGrid.rowCount * 16 * scale + 16 * scale) * 2).dp.toPx()
+                        val editColor = if (editing) {
+                            if (engineState.spriteLayer.get(GridPosition(column, row))!!.passable) {
+                                Color.Green
+                            } else {
+                                Color.Red
                             }
-                    ) {
-                        for (cell in engineState.dataGrid.grid[row].indices) {
-                            Button(
+                        } else {
+                            Color.Transparent
+                        }
+                        val editColorFilter = if (editing) {
+                            ColorFilter.tint(editColor, blendMode = BlendMode.Darken)
+                        } else {
+                            null
+                        }
+
+                        Box {
+                            Image(
+                                painter = BitmapPainter(
+                                    image = loadImageBitmap(
+                                        engineState.tileLayer.get(GridPosition(column, row))!!.getFile()!!.inputStream()
+                                    )
+                                ),
+                                contentDescription = null,
                                 modifier = Modifier
-                                    .size((16 * scale).dp),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                                onClick = {
-                                    if (abilitySelect != null && engineState.dataGrid.get(
-                                            GridPosition(
-                                                row,
-                                                cell
-                                            )
-                                        )!! is Lecturer
-                                    ) {
-                                        engine.applyAbility(abilitySelect!!, GridPosition(row, cell))
+                                    .size((16 * scale).dp)
+                                    .zIndex(0f)
+                            )
+
+                            Image(
+                                painter = BitmapPainter(
+                                    image = loadImageBitmap(
+                                        engineState.spriteLayer.get(GridPosition(column, row))!!.getFile()!!
+                                            .inputStream()
+                                    )
+                                ),
+                                contentDescription = null,
+                                colorFilter = editColorFilter,
+                                modifier = editModifier
+                            )
+
+                            if (editing) {
+                                Button(
+                                    modifier = Modifier
+                                        .size((16 * scale).dp),
+                                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                                    onClick = {
+                                        if (lecturerSelected != null && engineState.spriteLayer.get(
+                                                GridPosition(
+                                                    column,
+                                                    row
+                                                )
+                                            )!!.passable
+                                        ) {
+                                            engineState.spriteLayer.apply {
+                                                replace(
+                                                    GridPosition(column, row),
+                                                    lecturerSelected!!
+                                                )
+                                            }
+                                            engine.stopSimulation()
+                                            engineState = engine.state
+                                            paused = true
+                                            spedUp = false
+                                            editing = false
+                                            lecturerSelected = null
+                                            lecturerSelectButtonState = false
+                                        }
                                     }
-                                }
-                            ) { }
+                                ) { }
+                            }
+
+                            if (paused && !editing) {
+                                Button(
+                                    modifier = Modifier
+                                        .size((16 * scale).dp),
+                                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                                    onClick = {
+                                        if (abilitySelected != null && engineState.spriteLayer.get(
+                                                GridPosition(
+                                                    column, row
+                                                )
+                                            )!! is Lecturer
+                                        ) {
+                                            engine.applyAbility(abilitySelected!!, GridPosition(column, row))
+                                        }
+                                    }
+                                ) { }
+                            }
                         }
                     }
                 }
