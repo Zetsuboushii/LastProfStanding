@@ -1,16 +1,5 @@
 package lastprofstanding.engine.grid
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.res.loadImageBitmap
-import androidx.compose.ui.unit.dp
 import lastprofstanding.engine.Ability
 import lastprofstanding.engine.MovementDirection
 import lastprofstanding.engine.Strength
@@ -57,43 +46,51 @@ abstract class Cell(
         return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/air.png")
     }
 
-    @Composable
-    open fun draw(scale: Int) {
-        getFile()?.let { file ->
-            loadImageBitmap(file.inputStream())
-        }?.let {
-            BitmapPainter(image = it)
-        }?.let {
-            Image(
-                painter = it,
-                contentDescription = null,
-                modifier = Modifier.size(scale.dp)
-            )
-        }
-    }
+    // TODO Remove
+    // @Composable
+    // open fun draw(scale: Int) {
+    //     getFile()?.let { file ->
+    //         loadImageBitmap(file.inputStream())
+    //     }?.let {
+    //         BitmapPainter(image = it)
+    //     }?.let {
+    //         Box(
+    //             // modifier = Modifier.zIndex(zIndex.toFloat())
+    //         ) {
+    //             Image(
+    //                 painter = it,
+    //                 contentDescription = null,
+    //                 modifier = Modifier
+    //                     .size(scale.dp)
+    //             )
+    //         }
+    //     }
+    // }
 
-    @Composable
-    open fun drawInEditMode(scale: Int) {
-        getFile()?.let { file ->
-            loadImageBitmap(file.inputStream())
-        }?.let {
-            BitmapPainter(image = it)
-        }?.let {
-            val editColor = if (this.passable) {
-                Color.Green
-            } else {
-                Color.Red
-            }
-            Image(
-                painter = it,
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(editColor, blendMode = BlendMode.Darken),
-                modifier = Modifier
-                    .size(scale.dp)
-                    .graphicsLayer { this.alpha = 0.785f }
-            )
-        }
-    }
+    // TODO Remove
+    // @Composable
+    // open fun drawInEditMode(scale: Int) {
+    //     getFile()?.let { file ->
+    //         loadImageBitmap(file.inputStream())
+    //     }?.let {
+    //         BitmapPainter(image = it)
+    //     }?.let {
+    //         val editColor = if (this.passable) {
+    //             Color.Green
+    //         } else {
+    //             Color.Red
+    //         }
+    //         Image(
+    //             painter = it,
+    //             contentDescription = null,
+    //             colorFilter = ColorFilter.tint(editColor, blendMode = BlendMode.Darken),
+    //             modifier = Modifier
+    //                 .size(scale.dp)
+    //                 .graphicsLayer { this.alpha = 0.785f }
+    //                 // .zIndex(zIndex.toFloat())
+    //         )
+    //     }
+    // }
 
     fun set(
         stepsSurvived: Int,
@@ -135,7 +132,12 @@ abstract class Cell(
     }
 
 
-    private fun checkMovementDirection(grid: Grid, position: GridPosition, direction: MovementDirection, distance: Int): Boolean {
+    private fun checkMovementDirection(
+        grid: Grid,
+        position: GridPosition,
+        direction: MovementDirection,
+        distance: Int
+    ): Boolean {
         return grid.get(position + direction.getPositionDelta() * distance)?.passable ?: false
     }
 
@@ -147,7 +149,7 @@ abstract class Cell(
             val randomIndex = (0 until directionsToTry.size).random()
             val directionToTry = directionsToTry[randomIndex]
 
-            if (checkMovementDirection(grid, position, directionToTry,distance)) {
+            if (checkMovementDirection(grid, position, directionToTry, distance)) {
                 return directionToTry
             } else {
                 directionsToTry.removeAt(randomIndex)
@@ -161,7 +163,7 @@ abstract class Cell(
     fun getMovementData(grid: Grid, position: GridPosition): GridPosition {
 
         val distance = getConcreteStepFromContinuousValue(movementSpeed)
-        val movementDirection = getMovementDirection(grid, position,distance)
+        val movementDirection = getMovementDirection(grid, position, distance)
         currentMovement = movementDirection
         return position + movementDirection.getPositionDelta() * distance
     }
