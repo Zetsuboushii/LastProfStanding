@@ -1,5 +1,6 @@
 package lastprofstanding.engine
 
+import androidx.compose.runtime.currentCompositionErrors
 import lastprofstanding.engine.grid.*
 import lastprofstanding.engine.grid.lecturing.Lecturer
 import kotlin.math.max
@@ -107,6 +108,10 @@ class Engine private constructor() {
                     stats += eliminateCellIfDying(cell, position)
                     stats += evaluateWeakness(cell, position)
                     stats += fight(cell, position)
+                    current.get(position)?.apply {
+                        stepsSurvived += 1
+                    }
+
                 }
             }
         }
@@ -171,19 +176,17 @@ class Engine private constructor() {
     }
 
     private fun moveCellIfPossible(cell: Cell, currentPosition: GridPosition, newPosition: GridPosition) {
-        if (!newPosition.outOfBounds(previous.rowCount, previous.columnCount)) {
+        if (!newPosition.outOfBounds(previous.rowCount, previous.columnCount) && currentPosition != newPosition) {
             previous.get(newPosition)?.let {
                 if (it.passable) {
                     current.replace(newPosition, cell)
-                    current.replace(currentPosition, EmptyCell())
-                    cell.straightMovementCounter += 1
+                    current.replace(currentPosition, (tileGrid.get(currentPosition) as Tile).generateDataCell())
                 }
             }
         }
     }
 
     private fun eliminateCellIfLifetimeOver(cell: Cell, position: GridPosition): StatsCounter {
-        cell.stepsSurvived += 1
         if (cell.evaluateWhetherLifetimeOver()) {
             return killCellAt(position)
         }

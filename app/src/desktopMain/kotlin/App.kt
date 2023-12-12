@@ -78,12 +78,6 @@ fun App() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // TODO: Remove
-            engineState.dataGrid.apply {
-                replace(GridPosition(0, 2), Hofmann())
-                replace(GridPosition(1, 9), Stroetmann())
-                replace(GridPosition(6, 5), Kruse())
-            }
             engineState.tileGrid.get(GridPosition(0, 0))?.passable
             engineState.tileGrid.draw(0f, 0, false)
             engineState.dataGrid.draw(1f, -engineState.tileGrid.rowCount * 16, editMode)

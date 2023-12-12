@@ -1,9 +1,14 @@
 package lastprofstanding.engine.grid
 
+import lastprofstanding.engine.grid.lecturing.Hofmann
 import java.io.File
 
 class Tile(var tileType: TileType) : Cell(true, 0f, null, null, null, null) {
     override val textRepresentation = "T"
+
+    override fun clone(): Cell {
+        return Tile(tileType).apply { set(stepsSurvived, currentMovement, movementSpeed, spawnRate, activeAbility) }
+    }
 
     override fun getFile(): File {
         return File(

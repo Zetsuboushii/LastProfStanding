@@ -6,6 +6,10 @@ import java.io.File
 class Kruse : Lecturer("Kruse", 1.3f, Weakness(HofmannMinion::class, 10, 5), null, 4f) {
     override val textRepresentation = "K"
 
+    override fun clone(): Cell {
+        return Kruse().apply { set(stepsSurvived, currentMovement, movementSpeed, spawnRate, activeAbility) }
+    }
+
     override fun getFile(): File {
         return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/kruse.png")
     }
