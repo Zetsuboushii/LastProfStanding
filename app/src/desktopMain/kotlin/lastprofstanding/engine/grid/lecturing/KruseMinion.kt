@@ -3,7 +3,7 @@ package lastprofstanding.engine.grid.lecturing
 import lastprofstanding.engine.grid.Cell
 import java.io.File
 
-class KruseMinion: Cell(false, 1f, 5, null, null, null) {
+class KruseMinion : Cell(false, 1f, 5, null, null, null, true) {
     override fun getFile(): File {
         return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/kruse_minion.png")
     }

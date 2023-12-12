@@ -26,8 +26,8 @@ abstract class Cell(
     val lifetime: Int?,
     val weakness: Weakness<*>?,
     val strength: Strength<*>?,
-    var spawnRate: Float?
-
+    var spawnRate: Float?,
+    val fightable: Boolean
 ) {
     open val textRepresentation = "Default"
 
