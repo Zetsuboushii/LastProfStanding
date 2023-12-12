@@ -6,10 +6,6 @@ import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
@@ -27,10 +23,6 @@ import lastprofstanding.engine.*
 import lastprofstanding.engine.grid.Grid
 import lastprofstanding.engine.grid.lecturing.*
 import java.io.File
-import lastprofstanding.engine.grid.GridPosition
-import lastprofstanding.engine.grid.lecturing.Hofmann
-import lastprofstanding.engine.grid.lecturing.Kruse
-import lastprofstanding.engine.grid.lecturing.Stroetmann
 
 @Composable
 fun App() {
@@ -39,7 +31,7 @@ fun App() {
     var didResetGrid by remember { mutableStateOf(false) }
     var editMode by remember { mutableStateOf(false) }
     var paused by remember { mutableStateOf(true) }
-    val scale by remember { mutableIntStateOf(4) }
+    val scale by remember { mutableIntStateOf(8) }
     val editSelect: Lecturer
 
     if (!didResetGrid) {
@@ -260,20 +252,17 @@ fun App() {
              */
 
             //engineState.tileGrid.get(GridPosition(0, 0))?.passable
-
+            //Text(engineState.dataGrid.getTextRepresentation())
             engineState.tileGrid.draw(-1f, 0, 16 * scale, false)
             engineState.dataGrid.draw(
                 1f,
-                -engineState.tileGrid.rowCount * 16 * scale,
+                -engineState.tileGrid.rowCount * 16 * scale + 16 * scale,
                 16 * scale,
                 editMode
             )
             if (editMode) {
 
             }
-        }
-        Column {
-            Text(engineState.dataGrid.getTextRepresentation())
         }
     }
 }
