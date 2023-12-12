@@ -8,6 +8,7 @@ class KruseMinion: Cell(false, 1f, 5, null, null, null) {
         return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/kruse_minion.png")
     }
 
+    //TODO fix c dont die
     override fun clone(): Cell {
         return KruseMinion().apply {
             set(
