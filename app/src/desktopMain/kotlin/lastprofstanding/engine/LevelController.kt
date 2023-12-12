@@ -17,6 +17,12 @@ class LevelController {
             val dataGrid = Grid(tileMap.map { row ->
                 row.map { tile -> tile.generateDataCell() }
             })
+            // TODO: Remove
+            dataGrid.apply {
+                replace(GridPosition(0, 2), Hofmann())
+                replace(GridPosition(1, 9), Stroetmann())
+                replace(GridPosition(6, 5), Kruse())
+            }
 
             return Level(tileGrid, dataGrid)
         }
@@ -79,7 +85,9 @@ class LevelController {
                     TileType.FLOOR,
                     TileType.FLOOR,
                     TileType.FLOOR,
+                    TileType.TABLE_LEFT,
                     TileType.FLOOR,
+                    TileType.TABLE_LEFT,
                     TileType.FLOOR,
                     TileType.FLOOR,
                     TileType.FLOOR,
@@ -155,7 +163,9 @@ class LevelController {
                     TileType.FLOOR,
                     TileType.FLOOR,
                     TileType.FLOOR,
+                    TileType.TABLE_LEFT_DECO,
                     TileType.FLOOR,
+                    TileType.TABLE_LEFT_DECO,
                     TileType.FLOOR,
                     TileType.FLOOR,
                     TileType.FLOOR,
@@ -182,6 +192,7 @@ class LevelController {
                     TileType.TABLE_LEFT_DECO,
                     TileType.TABLE_RIGHT,
                     TileType.FLOOR,
+                    TileType.TABLE_RIGHT,
                     TileType.FLOOR,
                     TileType.WALL_VERTICAL,
                     TileType.FLOOR,
@@ -324,6 +335,7 @@ class LevelController {
                     TileType.WALL_BOTTOM_RIGHT,
                 )
             )
+
         }
     }
 }

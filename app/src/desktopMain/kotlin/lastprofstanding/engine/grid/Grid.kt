@@ -4,12 +4,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 
 class Grid(grid: List<List<Cell>>) : Cloneable {
-    val rowCount: Int = grid.size
-    val columnCount: Int = grid.getOrNull(0)?.size ?: 0
+    val rowCount: Int = grid.getOrNull(0)?.size ?: 0
+    val columnCount: Int = grid.size
     var grid = grid.map { row -> row.toMutableList() }.toMutableList()
 
     constructor(
@@ -19,9 +24,9 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
 
     fun initialize() {
         grid.clear()
-        for (x in 0 until rowCount) {
+        for (x in 0 until columnCount) {
             grid.add(mutableListOf())
-            for (y in 0 until columnCount) {
+            for (y in 0 until rowCount) {
                 val cell = EmptyCell()
                 grid[x].add(cell)
             }
@@ -67,9 +72,9 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
     }
 
     public override fun clone(): Grid {
-        return Grid(rowCount, columnCount).apply {
-            for (x in 0 until rowCount) {
-                for (y in 0 until columnCount) {
+        return Grid(grid).apply {
+            for (x in 0 until columnCount) {
+                for (y in 0 until rowCount) {
                     val position = GridPosition(x, y)
                     this@Grid.get(position)?.let {
                         replace(position, it.clone())

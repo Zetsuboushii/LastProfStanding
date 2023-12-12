@@ -13,10 +13,11 @@ import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.unit.dp
 import lastprofstanding.engine.Ability
 import lastprofstanding.engine.MovementDirection
+import lastprofstanding.engine.Strength
 import java.io.File
 import kotlin.reflect.KClass
 
-open class Cell(
+abstract class Cell(
     val passable: Boolean,
     /**
      * Integer x means "move x cell(s) in one step". Non-integer values mean a random function will determine with the probability 0<p<1 whether the cell will make one further step.
@@ -24,15 +25,15 @@ open class Cell(
     var movementSpeed: Float,
     val lifetime: Int?,
     val weakness: Weakness<*>?,
+    val strength: Strength<*>?,
     var spawnRate: Float?
 
 ) {
-    open val textRepresentation = "C"
+    open val textRepresentation = "Default"
 
     var currentMovement = MovementDirection.LEFT
-    var straightMovementCounter = 1
     var stepsSurvived = 1
-    val activeAbility: Ability? = null
+    var activeAbility: Ability? = null
 
     companion object {
         /**
@@ -94,14 +95,21 @@ open class Cell(
         }
     }
 
-
-    open fun clone(): Cell {
-        return Cell(passable, movementSpeed, lifetime, weakness, spawnRate).apply {
-            currentMovement = this@Cell.currentMovement
-            straightMovementCounter = this@Cell.straightMovementCounter
-            stepsSurvived = this@Cell.stepsSurvived
-        }
+    fun set(
+        stepsSurvived: Int,
+        currentMovement: MovementDirection,
+        movementSpeed: Float,
+        spawnRate: Float?,
+        activeAbility: Ability?
+    ) {
+        this.stepsSurvived = stepsSurvived
+        this.currentMovement = currentMovement
+        this.movementSpeed = movementSpeed
+        this.spawnRate = spawnRate
+        this.activeAbility = activeAbility
     }
+
+    abstract fun clone(): Cell
 
     open fun checkIfDying(grid: Grid, position: GridPosition): Boolean {
         return false
@@ -127,24 +135,35 @@ open class Cell(
     }
 
 
-    private fun checkMovementDirection(grid: Grid, position: GridPosition, direction: MovementDirection): Boolean {
-        return grid.get(position + direction.getPositionDelta())?.passable ?: false
+    private fun checkMovementDirection(grid: Grid, position: GridPosition, direction: MovementDirection, distance: Int): Boolean {
+        return grid.get(position + direction.getPositionDelta() * distance)?.passable ?: false
     }
 
-    private fun getMovementDirection(grid: Grid, position: GridPosition): MovementDirection {
-        val nextCellNotPassable = grid.get(position + currentMovement.getPositionDelta())?.passable != true
-        if (nextCellNotPassable || (straightMovementCounter % 8 == 0)) {
-            if (checkMovementDirection(grid, position, currentMovement.turnRight())) {
-                return currentMovement.turnRight()
+
+    private fun getMovementDirection(grid: Grid, position: GridPosition, distance: Int): MovementDirection {
+        val directionsToTry = MovementDirection.entries.toMutableList()
+
+        while (directionsToTry.isNotEmpty()) {
+            val randomIndex = (0 until directionsToTry.size).random()
+            val directionToTry = directionsToTry[randomIndex]
+
+            if (checkMovementDirection(grid, position, directionToTry,distance)) {
+                return directionToTry
+            } else {
+                directionsToTry.removeAt(randomIndex)
             }
         }
-        return currentMovement
+
+        // If all directions are blocked, return the current movement to stay in place
+        return MovementDirection.STAY
     }
 
     fun getMovementData(grid: Grid, position: GridPosition): GridPosition {
-        val movementDirection = getMovementDirection(grid, position)
+
+        val distance = getConcreteStepFromContinuousValue(movementSpeed)
+        val movementDirection = getMovementDirection(grid, position,distance)
         currentMovement = movementDirection
-        return position + movementDirection.getPositionDelta() * getConcreteStepFromContinuousValue(movementSpeed)
+        return position + movementDirection.getPositionDelta() * distance
     }
 
     fun evaluateWhetherLifetimeOver(): Boolean {

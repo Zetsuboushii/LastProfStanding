@@ -7,8 +7,12 @@ import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Hofmann : Lecturer("Hofmann", 0.1f, Weakness(StroetmannMinion::class, 2, 2), null) {
+class Hofmann : Lecturer("Hofmann", 0.1f, Weakness(StroetmannMinion::class, 2, 2), null, 16f) {
     override val textRepresentation = "H"
+
+    override fun clone(): Cell {
+        return Hofmann().apply { set(stepsSurvived, currentMovement, movementSpeed, spawnRate, activeAbility) }
+    }
 
     override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern {
         return createSpawnPattern(

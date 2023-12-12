@@ -4,25 +4,28 @@ import lastprofstanding.engine.grid.GridPosition
 
 enum class MovementDirection {
     LEFT,
-    TOP,
+    UP,
     RIGHT,
-    BOTTOM;
+    DOWN,
+    STAY;
 
     fun getPositionDelta(): GridPosition {
         return when (this) {
             LEFT -> GridPosition(-1, 0)
-            TOP -> GridPosition(0, -1)
+            UP -> GridPosition(0, -1)
             RIGHT -> GridPosition(1, 0)
-            BOTTOM -> GridPosition(0, 1)
+            DOWN -> GridPosition(0, 1)
+            STAY -> GridPosition(0,0)
         }
     }
 
     fun turnRight(): MovementDirection {
         return when (this) {
-            LEFT -> TOP
-            TOP -> RIGHT
-            RIGHT -> BOTTOM
-            BOTTOM -> LEFT
+            LEFT -> UP
+            UP -> RIGHT
+            RIGHT -> DOWN
+            DOWN -> LEFT
+            STAY -> STAY
         }
     }
 }

@@ -1,5 +1,6 @@
 package lastprofstanding.engine
 
+import androidx.compose.runtime.currentCompositionErrors
 import lastprofstanding.engine.grid.*
 import lastprofstanding.engine.grid.lecturing.Lecturer
 import kotlin.math.max
@@ -106,11 +107,31 @@ class Engine private constructor() {
                     stats += eliminateCellIfLifetimeOver(cell, position)
                     stats += eliminateCellIfDying(cell, position)
                     stats += evaluateWeakness(cell, position)
+                    stats += fight(cell, position)
+                    current.get(position)?.apply {
+                        stepsSurvived += 1
+                    }
+
                 }
             }
         }
         previous = current.clone()
         return StatsCounter(0f, 0) // TODO: Update stats counter in step
+    }
+
+    private fun fight(cell: Cell, position: GridPosition): StatsCounter {
+        cell.strength?.let { strength ->
+            val sameCells = cell.countCells(previous, position, strength.radius, cell::class)
+            val friendlyCells = cell.countCells(previous, position, strength.radius, strength.friendlyCell)
+            val enemyCells =
+                cell.countCells(previous, position, strength.radius) { _, _ -> true } - (sameCells + friendlyCells)
+            val difference = enemyCells - (sameCells + friendlyCells)
+            if (difference > strength.treshold) {
+                killCellAt(position)
+                return StatsCounter(lecturersDied = 1)
+            }
+        }
+        return StatsCounter()
     }
 
     private fun eliminateCellIfDying(cell: Cell, position: GridPosition): StatsCounter {
@@ -155,19 +176,17 @@ class Engine private constructor() {
     }
 
     private fun moveCellIfPossible(cell: Cell, currentPosition: GridPosition, newPosition: GridPosition) {
-        if (!newPosition.outOfBounds(previous.rowCount, previous.columnCount)) {
+        if (!newPosition.outOfBounds(previous.rowCount, previous.columnCount) && currentPosition != newPosition) {
             previous.get(newPosition)?.let {
                 if (it.passable) {
                     current.replace(newPosition, cell)
-                    current.replace(currentPosition, EmptyCell())
-                    cell.straightMovementCounter += 1
+                    current.replace(currentPosition, (tileGrid.get(currentPosition) as Tile).generateDataCell())
                 }
             }
         }
     }
 
     private fun eliminateCellIfLifetimeOver(cell: Cell, position: GridPosition): StatsCounter {
-        cell.stepsSurvived += 1
         if (cell.evaluateWhetherLifetimeOver()) {
             return killCellAt(position)
         }

@@ -6,6 +6,10 @@ import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
@@ -23,6 +27,10 @@ import lastprofstanding.engine.*
 import lastprofstanding.engine.grid.Grid
 import lastprofstanding.engine.grid.lecturing.*
 import java.io.File
+import lastprofstanding.engine.grid.GridPosition
+import lastprofstanding.engine.grid.lecturing.Hofmann
+import lastprofstanding.engine.grid.lecturing.Kruse
+import lastprofstanding.engine.grid.lecturing.Stroetmann
 
 @Composable
 fun App() {
@@ -264,5 +272,9 @@ fun App() {
 
             }
         }
+        Column {
+            Text(engineState.dataGrid.getTextRepresentation())
+        }
     }
 }
+
