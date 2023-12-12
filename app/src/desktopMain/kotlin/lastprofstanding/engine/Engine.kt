@@ -104,10 +104,10 @@ class Engine private constructor() {
                 previous.get(position)?.let { cell: Cell ->
                     spawnNewCellsForCell(cell, position)
                     val newPosition = moveCellAppropriately(cell, position)
-                    stats += eliminateCellIfLifetimeOver(cell, position)
-                    stats += eliminateCellIfDying(cell, position)
-                    stats += evaluateWeakness(cell, position)
-                    stats += fight(cell, position)
+                    stats += eliminateCellIfLifetimeOver(cell, newPosition)
+                    stats += eliminateCellIfDying(cell, newPosition)
+                    stats += evaluateWeakness(cell, position, newPosition)
+                    stats += fight(cell, position, newPosition)
 
                 }
             }
@@ -125,7 +125,7 @@ class Engine private constructor() {
         return StatsCounter(0f, 0) // TODO: Update stats counter in step
     }
 
-    private fun fight(cell: Cell, position: GridPosition): StatsCounter {
+    private fun fight(cell: Cell, position: GridPosition, newPosition: GridPosition): StatsCounter {
         cell.strength?.let { strength ->
             val sameCells = cell.countCells(previous, position, strength.radius, cell::class)
             val friendlyCells = cell.countCells(previous, position, strength.radius, strength.friendlyCell)
@@ -133,7 +133,7 @@ class Engine private constructor() {
                 cell.countCells(previous, position, strength.radius) { _, _ -> true } - (sameCells + friendlyCells)
             val difference = enemyCells - (sameCells + friendlyCells)
             if (difference > strength.treshold) {
-                killCellAt(position)
+                killCellAt(newPosition)
                 return StatsCounter(lecturersDied = 1)
             }
         }
@@ -193,9 +193,9 @@ class Engine private constructor() {
         }
     }
 
-    private fun eliminateCellIfLifetimeOver(cell: Cell, position: GridPosition): StatsCounter {
+    private fun eliminateCellIfLifetimeOver(cell: Cell, newPosition: GridPosition): StatsCounter {
         if (cell.evaluateWhetherLifetimeOver()) {
-            return killCellAt(position)
+            return killCellAt(newPosition)
         }
         return StatsCounter()
     }
@@ -212,10 +212,10 @@ class Engine private constructor() {
         return StatsCounter(lecturersDied = lecturersDied)
     }
 
-    private fun evaluateWeakness(cell: Cell, position: GridPosition): StatsCounter {
+    private fun evaluateWeakness(cell: Cell, position: GridPosition, newPosition: GridPosition): StatsCounter {
         cell.weakness?.let { weakness: Weakness<*> ->
             if (cell.countCells(previous, position, weakness.radius, weakness.against) >= weakness.cellCount) {
-                return killCellAt(position)
+                return killCellAt(newPosition)
             }
         }
         return StatsCounter()
