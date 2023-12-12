@@ -1,5 +1,5 @@
 package lastprofstanding.engine
 
-enum class Level {
+enum class LevelType {
     BASIC
 }

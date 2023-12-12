@@ -1,14 +1,6 @@
 package lastprofstanding.engine.grid
 
-import androidx.compose.runtime.Composable
-
-class WallCell : Cell(false) {
-    override val spriteId: String
-        get() = TODO("Not yet implemented")
-    override val sprite: Unit
-        @Composable
-        get() = getIcon(spriteId)
-        //TODO("Load icon")
+class WallCell : Cell(false, 0f, null, null, null, null) {
     override val textRepresentation = "X"
 
     override fun clone(): WallCell {
