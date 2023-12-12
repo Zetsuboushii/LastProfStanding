@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -54,8 +53,8 @@ fun SimulationView(routeProvider: RouteCallback) {
 
     val lecturers = listOf(
         Pair(Kruse(), KruseMinion()),
-        Pair(Stroetmann(), StroetmannMinion()),
-        Pair(Hofmann(), HofmannMinion())
+        Pair(Hofmann(), HofmannMinion()),
+        Pair(Stroetmann(), StroetmannMinion())
     )
 
     val abilities = listOf(
@@ -76,51 +75,8 @@ fun SimulationView(routeProvider: RouteCallback) {
                 .background(Color.Gray)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
-                if (paused && !editing) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(25.dp)
-                            .wrapContentWidth()
-                    ) {
-                        item {
-                            Text("Apply an Ability", style = TextStyle(fontWeight = FontWeight.Bold))
-                        }
-                        items(abilities) {
-                            OutlinedButton(
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = if (abilitySelectButtonState && paused) {
-                                        Color.DarkGray
-                                    } else {
-                                        Color.LightGray
-                                    }
-                                ),
-                                modifier = Modifier
-                                    .width(250.dp),
-                                onClick = {
-                                    abilitySelectButtonState = !abilitySelectButtonState
-                                    abilitySelected = if (abilitySelected == null) {
-                                        it.first
-                                    } else {
-                                        null
-                                    }
-                                },
-                                enabled = (abilitySelected == null || abilitySelected == it.first) && paused
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(start = 10.dp)
-                                ) {
-                                    Text(it.second, textAlign = TextAlign.Center)
-                                }
-                            }
-                            Spacer(modifier = Modifier.size(8.dp))
-                        }
-                    }
-                }
-
                 if (editing) {
                     LazyColumn(
                         modifier = Modifier
@@ -176,6 +132,48 @@ fun SimulationView(routeProvider: RouteCallback) {
                                     modifier = Modifier.padding(start = 10.dp)
                                 ) {
                                     Text(it.first.name, textAlign = TextAlign.Center)
+                                }
+                            }
+                            Spacer(modifier = Modifier.size(8.dp))
+                        }
+                    }
+                }
+
+                if (paused && !editing) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(25.dp)
+                            .wrapContentWidth()
+                    ) {
+                        item {
+                            Text("Apply an Ability", style = TextStyle(fontWeight = FontWeight.Bold))
+                        }
+                        items(abilities) {
+                            OutlinedButton(
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = if (abilitySelectButtonState && paused) {
+                                        Color.DarkGray
+                                    } else {
+                                        Color.LightGray
+                                    }
+                                ),
+                                modifier = Modifier
+                                    .width(250.dp),
+                                onClick = {
+                                    abilitySelectButtonState = !abilitySelectButtonState
+                                    abilitySelected = if (abilitySelected == null) {
+                                        it.first
+                                    } else {
+                                        null
+                                    }
+                                },
+                                enabled = (abilitySelected == null || abilitySelected == it.first) && paused
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(start = 10.dp)
+                                ) {
+                                    Text(it.second, textAlign = TextAlign.Center)
                                 }
                             }
                             Spacer(modifier = Modifier.size(8.dp))
@@ -318,20 +316,9 @@ fun SimulationView(routeProvider: RouteCallback) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            //TODO: Scaling :/
             /*
-            when (input) {
-                "+" -> when (scale) {
-                    1 -> scale = 2
-                    2 -> scale = 4
-                }
-                "-" -> when (scale) {
-                    4 -> scale = 2
-                    2 -> scale = 1
-                }
-            }
-            */
-
+             TILE AND SPRITE RENDERING
+             */
             for (column in engineState.tileLayer.grid.indices) {
                 Row {
                     for (row in engineState.tileLayer.grid[column].indices) {
