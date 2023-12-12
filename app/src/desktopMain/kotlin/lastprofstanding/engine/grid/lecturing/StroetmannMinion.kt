@@ -4,7 +4,7 @@ import lastprofstanding.engine.Strength
 import lastprofstanding.engine.grid.Cell
 import java.io.File
 
-class StroetmannMinion : Cell(false, 0.8f, 10, null, Strength(1, Stroetmann::class), null, true) {
+class StroetmannMinion : Cell(false, 0.8f, 15, null, Strength(1, Stroetmann::class), null, true) {
     override fun getFile(): File {
         return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/stroetmann_minion.png")
     }

@@ -1,10 +1,17 @@
 package lastprofstanding.engine.grid.lecturing
 
+import lastprofstanding.engine.Strength
 import lastprofstanding.engine.grid.*
 import java.io.File
 import kotlin.math.pow
 
-class Hofmann : Lecturer("Hofmann", 0.1f, Weakness(StroetmannMinion::class, 2, 2), null, 16f) {
+class Hofmann : Lecturer(
+    "Hofmann",
+    0.1f,
+    Weakness(StroetmannMinion::class, 5, 3),
+    Strength(friendlyCell = HofmannMinion::class),
+    16f
+) {
     override val textRepresentation = "H"
 
     override fun clone(): Cell {

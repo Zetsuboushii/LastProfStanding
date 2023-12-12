@@ -1,9 +1,16 @@
 package lastprofstanding.engine.grid.lecturing
 
+import lastprofstanding.engine.Strength
 import lastprofstanding.engine.grid.*
 import java.io.File
 
-class Stroetmann : Lecturer("Stroetmann", 1f, Weakness(KruseMinion::class, 5, 3), null, 8f) {
+class Stroetmann : Lecturer(
+    "Stroetmann",
+    1f,
+    Weakness(KruseMinion::class, 5, 3),
+    Strength(friendlyCell = StroetmannMinion::class),
+    8f
+) {
     override val textRepresentation = "S"
 
     override fun clone(): Cell {

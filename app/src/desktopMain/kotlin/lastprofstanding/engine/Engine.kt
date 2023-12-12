@@ -103,8 +103,8 @@ class Engine private constructor() {
                 previous.get(position)?.let { cell: Cell ->
                     spawnNewCellsForCell(cell, position)
                     val newPosition = moveCellAppropriately(cell, position)
-                    stats += eliminateCellIfLifetimeOver(cell, newPosition)
-                    stats += eliminateCellIfDying(cell, newPosition)
+                    stats += eliminateCellIfLifetimeOver(cell, position, newPosition)
+                    stats += eliminateCellIfDying(cell, position, newPosition)
                     stats += evaluateWeakness(cell, position, newPosition)
                     stats += fight(cell, position, newPosition)
 
@@ -136,16 +136,16 @@ class Engine private constructor() {
                 ) { cell, _ -> cell.fightable } - (sameCells + friendlyCells)
             val difference = enemyCells - (sameCells + friendlyCells)
             if (difference > strength.treshold) {
-                killCellAt(newPosition)
+                killCellAt(position, newPosition)
                 return StatsCounter(lecturersDied = 1)
             }
         }
         return StatsCounter()
     }
 
-    private fun eliminateCellIfDying(cell: Cell, position: GridPosition): StatsCounter {
+    private fun eliminateCellIfDying(cell: Cell, position: GridPosition, newPosition: GridPosition): StatsCounter {
         if (cell.checkIfDying(previous, position)) {
-            return killCellAt(position)
+            return killCellAt(position, newPosition)
         }
         return StatsCounter()
     }
@@ -166,8 +166,7 @@ class Engine private constructor() {
 
     private fun moveCellAppropriately(cell: Cell, position: GridPosition): GridPosition {
         val newPos = cell.getMovementData(previous, position)
-        moveCellIfPossible(cell, position, newPos)
-        return newPos
+        return moveCellIfPossible(cell, position, newPos)
     }
 
     /**
@@ -185,7 +184,7 @@ class Engine private constructor() {
         }
     }
 
-    private fun moveCellIfPossible(cell: Cell, currentPosition: GridPosition, newPosition: GridPosition) {
+    private fun moveCellIfPossible(cell: Cell, currentPosition: GridPosition, newPosition: GridPosition): GridPosition {
         if (!newPosition.outOfBounds(
                 previous.rowCount,
                 previous.columnCount
@@ -195,19 +194,25 @@ class Engine private constructor() {
                 if (it.passable) {
                     current.replace(newPosition, cell)
                     current.replace(currentPosition, (tileGrid.get(currentPosition) as Tile).generateDataCell())
+                    return newPosition
                 }
             }
         }
+        return currentPosition
     }
 
-    private fun eliminateCellIfLifetimeOver(cell: Cell, newPosition: GridPosition): StatsCounter {
+    private fun eliminateCellIfLifetimeOver(
+        cell: Cell,
+        position: GridPosition,
+        newPosition: GridPosition
+    ): StatsCounter {
         if (cell.evaluateWhetherLifetimeOver()) {
-            return killCellAt(newPosition)
+            return killCellAt(position, newPosition)
         }
         return StatsCounter()
     }
 
-    private fun killCellAt(position: GridPosition): StatsCounter {
+    private fun killCellAt(position: GridPosition, newPosition: GridPosition): StatsCounter {
         val cell = previous.get(position)
         val lecturersDied = if (cell is Lecturer) {
             1
@@ -215,14 +220,14 @@ class Engine private constructor() {
             0
         }
         val tile = tileGrid.get(position) as Tile
-        current.replace(position, tile.generateDataCell())
+        current.replace(newPosition, tile.generateDataCell())
         return StatsCounter(lecturersDied = lecturersDied)
     }
 
     private fun evaluateWeakness(cell: Cell, position: GridPosition, newPosition: GridPosition): StatsCounter {
         cell.weakness?.let { weakness: Weakness<*> ->
             if (cell.countCells(previous, position, weakness.radius, weakness.against) >= weakness.cellCount) {
-                return killCellAt(newPosition)
+                return killCellAt(position, newPosition)
             }
         }
         return StatsCounter()
