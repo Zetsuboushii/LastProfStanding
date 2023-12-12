@@ -1,4 +1,7 @@
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -6,7 +9,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import lastprofstanding.engine.*
-import lastprofstanding.engine.grid.*
+import lastprofstanding.engine.grid.Grid
+import lastprofstanding.engine.grid.GridPosition
 import lastprofstanding.engine.grid.lecturing.Hofmann
 import lastprofstanding.engine.grid.lecturing.Kruse
 import lastprofstanding.engine.grid.lecturing.Stroetmann
@@ -76,13 +80,13 @@ fun App() {
         ) {
             // TODO: Remove
             engineState.dataGrid.apply {
-                replace(GridPosition(2, 0), Hofmann())
-                replace(GridPosition(7, 5), Stroetmann())
-                replace(GridPosition(5, 6), Kruse())
+                replace(GridPosition(0, 2), Hofmann())
+                replace(GridPosition(1, 9), Stroetmann())
+                replace(GridPosition(6, 5), Kruse())
             }
             engineState.tileGrid.get(GridPosition(0, 0))?.passable
             engineState.tileGrid.draw(0f, 0, false)
-            engineState.dataGrid.draw(1f, -engineState.tileGrid.rowCount * 16, editMode)
+            engineState.dataGrid.draw(1f, -engineState.tileGrid.columnCount * 16, editMode)
         }
         Column {
             Text(engineState.dataGrid.getTextRepresentation())
