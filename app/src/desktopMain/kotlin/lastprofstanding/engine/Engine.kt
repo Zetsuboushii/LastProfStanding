@@ -1,6 +1,5 @@
 package lastprofstanding.engine
 
-import androidx.compose.runtime.currentCompositionErrors
 import lastprofstanding.engine.grid.*
 import lastprofstanding.engine.grid.lecturing.Lecturer
 import kotlin.math.max
@@ -183,7 +182,11 @@ class Engine private constructor() {
     }
 
     private fun moveCellIfPossible(cell: Cell, currentPosition: GridPosition, newPosition: GridPosition) {
-        if (!newPosition.outOfBounds(previous.rowCount, previous.columnCount) && currentPosition != newPosition) {
+        if (!newPosition.outOfBounds(
+                previous.rowCount,
+                previous.columnCount
+            ) && currentPosition != newPosition && current.get(newPosition)?.passable != false
+        ) {
             previous.get(newPosition)?.let {
                 if (it.passable) {
                     current.replace(newPosition, cell)
