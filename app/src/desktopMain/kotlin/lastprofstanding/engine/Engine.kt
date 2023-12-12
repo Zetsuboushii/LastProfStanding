@@ -129,7 +129,11 @@ class Engine private constructor() {
             val sameCells = cell.countCells(previous, position, strength.radius, cell::class)
             val friendlyCells = cell.countCells(previous, position, strength.radius, strength.friendlyCell)
             val enemyCells =
-                cell.countCells(previous, position, strength.radius) { _, _ -> true } - (sameCells + friendlyCells)
+                cell.countCells(
+                    previous,
+                    position,
+                    strength.radius
+                ) { cell, _ -> cell.fightable } - (sameCells + friendlyCells)
             val difference = enemyCells - (sameCells + friendlyCells)
             if (difference > strength.treshold) {
                 killCellAt(newPosition)

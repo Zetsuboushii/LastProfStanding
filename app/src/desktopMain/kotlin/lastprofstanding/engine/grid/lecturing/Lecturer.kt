@@ -11,4 +11,4 @@ abstract class Lecturer(
         strength: Strength<*>?,
         spawnRate: Float?
 
-) : Cell(false, movementSpeed, null, weakness, strength, spawnRate)
+) : Cell(false, movementSpeed, null, weakness, strength, spawnRate, true)
