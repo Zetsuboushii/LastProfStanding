@@ -26,9 +26,9 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
 
     fun initialize() {
         grid.clear()
-        for (x in 0 until rowCount) {
+        for (x in 0 until columnCount) {
             grid.add(mutableListOf())
-            for (y in 0 until columnCount) {
+            for (y in 0 until rowCount) {
                 val cell = EmptyCell()
                 grid[x].add(cell)
             }
@@ -75,8 +75,8 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
 
     public override fun clone(): Grid {
         return Grid(rowCount, columnCount).apply {
-            for (x in 0 until rowCount) {
-                for (y in 0 until columnCount) {
+            for (x in 0 until columnCount) {
+                for (y in 0 until rowCount) {
                     val position = GridPosition(x, y)
                     this@Grid.get(position)?.let {
                         replace(position, it.clone())

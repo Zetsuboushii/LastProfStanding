@@ -77,7 +77,7 @@ fun App() {
             // TODO: Remove
             engineState.dataGrid.apply {
                 replace(GridPosition(2, 0), Hofmann())
-                replace(GridPosition(9, 1), Stroetmann())
+                replace(GridPosition(7, 5), Stroetmann())
                 replace(GridPosition(5, 6), Kruse())
             }
             engineState.tileGrid.get(GridPosition(0, 0))?.passable
