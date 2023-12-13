@@ -15,7 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import lastprofstanding.engine.EngineState
+import lastprofstanding.engine.Sound
+import lastprofstanding.engine.getWinningClass
 import lastprofstanding.engine.grid.lecturing.Lecturer
+import lastprofstanding.engine.hasOneWinner
 import java.time.Duration
 
 @Composable
@@ -25,12 +28,6 @@ fun EndView(routeCallback: RouteCallback, state: EngineState?) {
         duration = Duration.ofMillis(stats.timeSpentPlaying.toLong())
     }
     val lecturerCountMap = state?.spriteLayer?.getLecturerCountMap() ?: mapOf()
-    val oneWinner = lecturerCountMap.values.filter { it != 0 }.size == 1
-    val winningClass = if (oneWinner) {
-        lecturerCountMap.keys.toList()[0]
-    } else {
-        null
-    }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -38,8 +35,12 @@ fun EndView(routeCallback: RouteCallback, state: EngineState?) {
             modifier = Modifier.fillMaxSize()
         ) {
             Column {
-                if (oneWinner) {
-                    Text(text = "${winningClass?.simpleName} won!", fontSize = 3.em, fontWeight = FontWeight.Bold)
+                if (lecturerCountMap.hasOneWinner()) {
+                    Text(
+                        text = "${lecturerCountMap.getWinningClass()?.simpleName} won!",
+                        fontSize = 3.em,
+                        fontWeight = FontWeight.Bold
+                    )
                     Image(
                         painter = BitmapPainter(loadImageBitmap(Lecturer.getFileForLecturer().inputStream())),
                         contentDescription = null
@@ -69,6 +70,7 @@ fun EndView(routeCallback: RouteCallback, state: EngineState?) {
 
             Button(
                 onClick = {
+                    Sound.getInstance().stopBackgroundPlayback()
                     routeCallback.invoke(NavController.Route.START_SCREEN, null)
                 }) {
                 putIcon(iconName = "arrow_back")

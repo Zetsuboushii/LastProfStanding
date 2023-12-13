@@ -138,10 +138,11 @@ class Engine private constructor() {
     }
 
     private fun evaluateStateDetectionRules() {
+        val lecturerCountMap = previous.getLecturerCountMap()
         val rules = StateDetectionRule.getAll()
         for (rule in rules) {
-            if (rule.testForActivation(state)) {
-                rule.apply(routeCallback, state)
+            if (rule.testForActivation(state, lecturerCountMap)) {
+                rule.apply(routeCallback, state, lecturerCountMap)
             }
         }
     }
