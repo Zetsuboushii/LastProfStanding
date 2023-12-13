@@ -62,8 +62,6 @@ fun SimulationView(routeProvider: RouteCallback) {
         Pair(AbilityType.SPEED_DOWN, "Speed Down"),
         Pair(AbilityType.SPAWN_RATE_UP, "Spawn Rate Up"),
         Pair(AbilityType.SPAWN_RATE_DOWN, "Spawn Rate Down"),
-        Pair(AbilityType.MINION_SPEED_UP, "Minion Speed Up"),
-        Pair(AbilityType.MINION_SPEED_DOWN, "Minion Speed Down")
     )
 
     Row {
@@ -77,6 +75,10 @@ fun SimulationView(routeProvider: RouteCallback) {
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
+
+                /*
+                EDITING LECTURER SELECTION
+                 */
                 if (editing) {
                     LazyColumn(
                         modifier = Modifier
@@ -139,6 +141,9 @@ fun SimulationView(routeProvider: RouteCallback) {
                     }
                 }
 
+                /*
+                APPLYING ABILITIES SELECTION
+                 */
                 if (paused && !editing) {
                     LazyColumn(
                         modifier = Modifier
