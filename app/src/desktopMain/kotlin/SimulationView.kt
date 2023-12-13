@@ -10,10 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.TextStyle
@@ -23,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import kotlinx.coroutines.launch
 import lastprofstanding.engine.*
+import lastprofstanding.engine.grid.Cell
 import lastprofstanding.engine.grid.Grid
 import lastprofstanding.engine.grid.GridPosition
 import lastprofstanding.engine.grid.lecturing.*
@@ -114,18 +112,14 @@ fun SimulationView(routeProvider: RouteCallback) {
                                 Row {
                                     Image(
                                         painter = BitmapPainter(
-                                            loadImageBitmap(
-                                                it.first.getFile()!!.inputStream()
-                                            )
+                                            it.first.getImageBitmap()
                                         ),
                                         contentDescription = null,
                                         modifier = Modifier.size(50.dp)
                                     )
                                     Image(
                                         painter = BitmapPainter(
-                                            loadImageBitmap(
-                                                it.second.getFile()!!.inputStream()
-                                            )
+                                            it.second.getImageBitmap()
                                         ),
                                         contentDescription = null,
                                         modifier = Modifier.size(50.dp)
@@ -381,9 +375,7 @@ fun SimulationView(routeProvider: RouteCallback) {
                         Box {
                             Image(
                                 painter = BitmapPainter(
-                                    image = loadImageBitmap(
-                                        engineState.tileLayer.get(GridPosition(column, row))!!.getFile()!!.inputStream()
-                                    )
+                                    image = getImage(engineState.tileLayer.get(GridPosition(column, row))!!)
                                 ),
                                 contentDescription = null,
                                 modifier = Modifier
@@ -393,16 +385,12 @@ fun SimulationView(routeProvider: RouteCallback) {
 
                             Image(
                                 painter = BitmapPainter(
-                                    image = loadImageBitmap(
-                                        engineState.spriteLayer.get(GridPosition(column, row))!!.getFile()!!
-                                            .inputStream()
-                                    )
+                                    image = engineState.spriteLayer.get(GridPosition(column, row))!!.getImageBitmap()
                                 ),
                                 contentDescription = null,
                                 colorFilter = editColorFilter,
                                 modifier = editModifier
                             )
-
                             if (editing) {
                                 Button(
                                     modifier = Modifier
@@ -459,12 +447,23 @@ fun SimulationView(routeProvider: RouteCallback) {
 fun putIcon(iconName: String) {
     Icon(
         painter = BitmapPainter(
-            loadImageBitmap(
+            getImage(
                 File(
                     "src/desktopMain/kotlin/lastprofstanding/res/icons/${iconName}.png"
-                ).inputStream()
+                )
             )
         ),
         contentDescription = null
     )
+}
+
+fun getImage(file: File): ImageBitmap {
+    val stream = file.inputStream()
+    val bitmap = loadImageBitmap(stream)
+    stream.close()
+    return bitmap
+}
+
+fun getImage(cell: Cell): ImageBitmap {
+    return getImage(cell.getFile())
 }

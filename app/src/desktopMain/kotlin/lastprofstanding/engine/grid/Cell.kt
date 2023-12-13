@@ -1,5 +1,7 @@
 package lastprofstanding.engine.grid
 
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.res.loadImageBitmap
 import lastprofstanding.engine.Ability
 import lastprofstanding.engine.MovementDirection
 import lastprofstanding.engine.Strength
@@ -25,6 +27,9 @@ abstract class Cell(
     var activeAbility: Ability? = null
 
     companion object {
+        // So every cell type (not cell!) only needs to open its file once
+        // Otherwise, it's only a question of time (& system resources) until the UI gets blocked
+        private var imageBitmapCache: MutableMap<KClass<out Cell>, ImageBitmap> = mutableMapOf()
         /**
          * Calculate a concrete step value (integer) from a continuous float value.
          * Returns the integer value of the float value. If the float value is not an integer, a random function will determine with the probability 0<p<1 whether the cell will make one further step.
@@ -92,6 +97,7 @@ abstract class Cell(
     //     }
     // }
 
+
     fun set(
         stepsSurvived: Int,
         currentMovement: MovementDirection,
@@ -107,6 +113,16 @@ abstract class Cell(
     }
 
     abstract fun clone(): Cell
+
+    fun getImageBitmap(): ImageBitmap {
+        imageBitmapCache[this::class]?.let {
+            return it
+        }
+        val stream = getFile().inputStream()
+        val bitmap = loadImageBitmap(stream)
+        imageBitmapCache[this::class] = bitmap
+        return bitmap
+    }
 
     open fun checkIfDying(grid: Grid, position: GridPosition): Boolean {
         return false

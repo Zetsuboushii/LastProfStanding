@@ -13,7 +13,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -25,9 +24,8 @@ fun StartView(routeProvider: RouteCallback) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = BitmapPainter(
-                loadImageBitmap(
+                getImage(
                     File("src/desktopMain/kotlin/lastprofstanding/res/images/title_background.png")
-                        .inputStream()
                 )
             ),
             contentDescription = null,

@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,7 +41,7 @@ fun EndView(routeCallback: RouteCallback, state: EngineState?) {
                         fontWeight = FontWeight.Bold
                     )
                     Image(
-                        painter = BitmapPainter(loadImageBitmap(Lecturer.getFileForLecturer().inputStream())),
+                        painter = BitmapPainter(getImage(Lecturer.getFileForLecturer())),
                         contentDescription = null
                     )
                 } else {
