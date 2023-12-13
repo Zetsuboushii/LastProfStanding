@@ -17,6 +17,7 @@ class LevelController {
             val dataGrid = Grid(tileMap.map { row ->
                 row.map { tile -> tile.generateDataCell() }
             })
+
             return Level(tileGrid, dataGrid)
         }
 

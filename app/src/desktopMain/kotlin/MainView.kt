@@ -3,19 +3,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import lastprofstanding.engine.EngineState
-import lastprofstanding.engine.StatsCounter
 
 typealias RouteCallback = (NavController.Route, EngineState?) -> Unit
 
 @Composable
 fun MainView() {
     var route by remember { mutableStateOf(NavController.Route.START_SCREEN) }
-    var stats by remember { mutableStateOf(StatsCounter()) }
-    val routeCallback: RouteCallback = { newRoute, state ->
+    var state by remember { mutableStateOf<EngineState?>(null) }
+    val routeCallback: RouteCallback = { newRoute, newState ->
         route = newRoute
-        state?.stats?.let { newStats ->
-            stats = newStats
-        }
+        state = newState
     }
     Box(Modifier.fillMaxSize()) {
         when (route) {
@@ -28,7 +25,7 @@ fun MainView() {
             }
 
             NavController.Route.END_SCREEN -> {
-                EndView(routeCallback, stats)
+                EndView(routeCallback, state)
             }
         }
     }

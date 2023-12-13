@@ -42,7 +42,7 @@ abstract class Cell(
         }
     }
 
-    open fun getFile(): File? {
+    open fun getFile(): File {
         return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/air.png")
     }
 

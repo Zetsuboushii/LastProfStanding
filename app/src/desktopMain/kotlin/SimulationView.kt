@@ -195,8 +195,11 @@ fun SimulationView(routeProvider: RouteCallback) {
                 Button(
                     onClick = {
                         if (paused) {
-                            engine.startSimulation(SimulationSpeed.X1) { state ->
+                            engine.startSimulation(SimulationSpeed.X1, callback = { state ->
                                 engineState = state
+                            }) { route, state ->
+                                routeProvider.invoke(route, state)
+                                engine.stopSimulation()
                             }
                             paused = !paused
                             spedUp = false
@@ -217,8 +220,11 @@ fun SimulationView(routeProvider: RouteCallback) {
                         onClick = {
                             if (!spedUp) {
                                 engine.stopSimulation()
-                                engine.startSimulation(SimulationSpeed.X2) { state ->
+                                engine.startSimulation(SimulationSpeed.X2, callback = { state ->
                                     engineState = state
+                                }) { route, state ->
+                                    engine.stopSimulation()
+                                    routeProvider.invoke(route, state)
                                 }
                                 spedUp = !spedUp
                                 paused = false

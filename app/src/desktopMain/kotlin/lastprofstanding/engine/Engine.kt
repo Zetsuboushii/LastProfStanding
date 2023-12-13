@@ -1,5 +1,6 @@
 package lastprofstanding.engine
 
+import RouteCallback
 import lastprofstanding.engine.grid.*
 import lastprofstanding.engine.grid.lecturing.Lecturer
 import kotlin.math.max
@@ -38,6 +39,7 @@ class Engine private constructor() {
     private var tileGrid: Grid
     private var stats = StatsCounter()
     private lateinit var simulationStepCallback: SimulationStepCallback
+    private lateinit var routeCallback: RouteCallback
     private var runningSimulation = false
 
     init {
@@ -57,11 +59,12 @@ class Engine private constructor() {
         stats = StatsCounter()
     }
 
-    fun startSimulation(speed: SimulationSpeed, callback: SimulationStepCallback) {
+    fun startSimulation(speed: SimulationSpeed, callback: SimulationStepCallback, routeCallback: RouteCallback) {
         if (runningSimulation) {
             return
         }
         simulationStepCallback = callback
+        this.routeCallback = routeCallback
         runningSimulation = true
         if (speed == SimulationSpeed.PAUSED) {
             // Unpause requires calling `startSimulation` again
@@ -125,10 +128,20 @@ class Engine private constructor() {
                 }
             }
         }
+        evaluateStateDetectionRules()
 
         previous = current.clone()
 
         return StatsCounter(0f, 0) // TODO: Update stats counter in step
+    }
+
+    private fun evaluateStateDetectionRules() {
+        val rules = StateDetectionRule.getAll()
+        for (rule in rules) {
+            if (rule.testForActivation(state)) {
+                rule.apply(routeCallback, state)
+            }
+        }
     }
 
     private fun fight(cell: Cell, position: GridPosition, newPosition: GridPosition): StatsCounter {

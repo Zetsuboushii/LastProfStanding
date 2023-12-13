@@ -1,5 +1,8 @@
 package lastprofstanding.engine.grid
 
+import lastprofstanding.engine.grid.lecturing.Lecturer
+import kotlin.reflect.KClass
+
 class Grid(grid: List<List<Cell>>) : Cloneable {
     val rowCount: Int = grid.getOrNull(0)?.size ?: 0
     val columnCount: Int = grid.size
@@ -19,6 +22,20 @@ class Grid(grid: List<List<Cell>>) : Cloneable {
                 grid[x].add(cell)
             }
         }
+    }
+
+    fun getLecturerCountMap(): Map<KClass<out Lecturer>, Int> {
+        val lecturerCounts = mutableMapOf<KClass<out Lecturer>, Int>()
+        for (col in grid.indices) {
+            for (row in grid[col].indices) {
+                val position = GridPosition(col, row)
+                val cell = get(position)
+                if (cell is Lecturer) {
+                    lecturerCounts[cell::class as KClass<out Lecturer>] = lecturerCounts[cell::class] ?: 0
+                }
+            }
+        }
+        return lecturerCounts
     }
 
     fun get(position: GridPosition): Cell? {
