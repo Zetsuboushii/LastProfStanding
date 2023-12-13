@@ -131,6 +131,7 @@ class Engine private constructor() {
         return StatsCounter(0f, 0) // TODO: Update stats counter in step
     }
 
+    //TODO fix lecturer Died counter not working
     private fun fight(cell: Cell, position: GridPosition, newPosition: GridPosition): StatsCounter {
         cell.strength?.let { strength ->
             val sameCells = cell.countCells(previous, position, strength.radius, cell::class)
