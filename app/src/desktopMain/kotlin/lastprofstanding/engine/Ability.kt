@@ -5,7 +5,6 @@ import lastprofstanding.engine.grid.Cell
 class Ability(
     val movementSpeedMultiplier: Float,
     val spawnRateMultiplier: Float?,
-    val spawnedCellMovementSpeedMultiplier: Float
 ) {
     fun apply(cell: Cell) {
         cell.movementSpeed *= movementSpeedMultiplier
@@ -18,7 +17,4 @@ class Ability(
         }
     }
 
-    fun applyToSpawnedCell(cell: Cell) {
-        cell.movementSpeed *= spawnedCellMovementSpeedMultiplier
-    }
 }
