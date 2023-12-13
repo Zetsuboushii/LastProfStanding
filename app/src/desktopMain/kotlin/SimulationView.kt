@@ -60,8 +60,8 @@ fun SimulationView(routeProvider: RouteCallback) {
     val abilities = listOf(
         Pair(AbilityType.SPEED_UP, "Speed Up"),
         Pair(AbilityType.SPEED_DOWN, "Speed Down"),
-        Pair(AbilityType.SPAWN_RATE_UP, "Spawn Rate Up"),
-        Pair(AbilityType.SPAWN_RATE_DOWN, "Spawn Rate Down"),
+        Pair(AbilityType.DECREASE_SPAWN_RATE, "Decrease Spawn Rate"),
+        Pair(AbilityType.INCREASE_SPAWN_RATE, "Increase Spawn Rate"),
     )
 
     Row {
@@ -202,8 +202,11 @@ fun SimulationView(routeProvider: RouteCallback) {
                 Button(
                     onClick = {
                         if (paused) {
-                            engine.startSimulation(SimulationSpeed.X1) { state ->
+                            engine.startSimulation(SimulationSpeed.X1, callback = { state ->
                                 engineState = state
+                            }) { route, state ->
+                                routeProvider.invoke(route, state)
+                                engine.stopSimulation()
                             }
                             paused = !paused
                             spedUp = false
@@ -224,8 +227,11 @@ fun SimulationView(routeProvider: RouteCallback) {
                         onClick = {
                             if (!spedUp) {
                                 engine.stopSimulation()
-                                engine.startSimulation(SimulationSpeed.X2) { state ->
+                                engine.startSimulation(SimulationSpeed.X2, callback = { state ->
                                     engineState = state
+                                }) { route, state ->
+                                    engine.stopSimulation()
+                                    routeProvider.invoke(route, state)
                                 }
                                 spedUp = !spedUp
                                 paused = false
@@ -413,12 +419,8 @@ fun SimulationView(routeProvider: RouteCallback) {
                                                 )
                                             )!!.passable
                                         ) {
-                                            engineState.spriteLayer.apply {
-                                                replace(
-                                                    GridPosition(column, row),
-                                                    lecturerSelected!!
-                                                )
-                                            }
+                                            engine.spawnLecturer(GridPosition(column, row), lecturerSelected!!)
+                                            engineState = engine.state
                                             engine.stopSimulation()
                                             engineState = engine.state
                                             paused = true

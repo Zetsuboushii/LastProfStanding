@@ -15,8 +15,8 @@ abstract class Cell(
     val lifetime: Int?,
     val weakness: Weakness<*>?,
     val strength: Strength<*>?,
-    var spawnRate: Float?
-
+    var spawnRate: Float?,
+    val fightable: Boolean
 ) {
     open val textRepresentation = "Default"
 
@@ -42,7 +42,7 @@ abstract class Cell(
         }
     }
 
-    open fun getFile(): File? {
+    open fun getFile(): File {
         return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/air.png")
     }
 
@@ -127,7 +127,11 @@ abstract class Cell(
 
     open fun testForSpawningNewCells(grid: Grid, position: GridPosition): Boolean {
         return spawnRate?.let {
-            stepsSurvived % getConcreteStepFromContinuousValue(it) == 0
+            val spawnRate = getConcreteStepFromContinuousValue(it)
+            if (spawnRate == 0) {
+                return true
+            }
+            stepsSurvived % spawnRate == 0
         } ?: false
     }
 
