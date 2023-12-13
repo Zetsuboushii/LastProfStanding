@@ -90,12 +90,19 @@ class Engine private constructor() {
     }
 
     fun applyAbility(ability: AbilityType, position: GridPosition) {
-        previous.get(position)?.let { cell: Cell ->
+        current.get(position)?.let { cell: Cell ->
             ability.getAbility().apply(cell)
         }
     }
 
+    fun spawnLecturer(position: GridPosition, lecturer: Lecturer) {
+        current.replace(position, lecturer)
+        previous.replace(position, lecturer)
+    }
+
     private fun performSimulationStep(): StatsCounter {
+        //current maybe modified by abilities
+        previous = current.clone()
         var stats = StatsCounter()
         for (x in 0 until previous.columnCount) {
             for (y in 0 until previous.rowCount) {
@@ -158,7 +165,6 @@ class Engine private constructor() {
             spawningCell.getSpawnPattern(previous, position)?.let { pattern: SpawnPattern ->
                 for ((pos, cell) in pattern) {
                     spawnCellIfWithinBounds(cell, pos)
-                    spawningCell.activeAbility?.applyToSpawnedCell(cell)
                 }
             }
         }

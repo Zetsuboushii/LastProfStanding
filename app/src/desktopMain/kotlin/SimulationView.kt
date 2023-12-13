@@ -60,10 +60,8 @@ fun SimulationView(routeProvider: RouteCallback) {
     val abilities = listOf(
         Pair(AbilityType.SPEED_UP, "Speed Up"),
         Pair(AbilityType.SPEED_DOWN, "Speed Down"),
-        Pair(AbilityType.SPAWN_RATE_UP, "Spawn Rate Up"),
-        Pair(AbilityType.SPAWN_RATE_DOWN, "Spawn Rate Down"),
-        Pair(AbilityType.MINION_SPEED_UP, "Minion Speed Up"),
-        Pair(AbilityType.MINION_SPEED_DOWN, "Minion Speed Down")
+        Pair(AbilityType.DECREASE_SPAWN_RATE, "Decrease Spawn Rate"),
+        Pair(AbilityType.INCREASE_SPAWN_RATE, "Increase Spawn Rate"),
     )
 
     Row {
@@ -385,12 +383,8 @@ fun SimulationView(routeProvider: RouteCallback) {
                                                 )
                                             )!!.passable
                                         ) {
-                                            engineState.spriteLayer.apply {
-                                                replace(
-                                                    GridPosition(column, row),
-                                                    lecturerSelected!!
-                                                )
-                                            }
+                                            engine.spawnLecturer(GridPosition(column, row), lecturerSelected!!)
+                                            engineState = engine.state
                                             engine.stopSimulation()
                                             engineState = engine.state
                                             paused = true

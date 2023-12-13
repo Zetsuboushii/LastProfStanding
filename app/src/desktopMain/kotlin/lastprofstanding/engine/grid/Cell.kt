@@ -127,7 +127,11 @@ abstract class Cell(
 
     open fun testForSpawningNewCells(grid: Grid, position: GridPosition): Boolean {
         return spawnRate?.let {
-            stepsSurvived % getConcreteStepFromContinuousValue(it) == 0
+            val spawnRate = getConcreteStepFromContinuousValue(it)
+            if (spawnRate == 0) {
+                return true
+            }
+            stepsSurvived % spawnRate == 0
         } ?: false
     }
 
