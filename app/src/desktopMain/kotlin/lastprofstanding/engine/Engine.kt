@@ -116,8 +116,7 @@ class Engine private constructor() {
                     stats += eliminateCellIfLifetimeOver(cell, position, newPosition)
                     stats += eliminateCellIfDying(cell, position, newPosition)
                     stats += evaluateWeakness(cell, position, newPosition)
-                    stats += fight(cell, position, newPosition)
-
+                    stats += evaluateFightSystem(cell, position, newPosition)
                 }
             }
         }
@@ -130,9 +129,12 @@ class Engine private constructor() {
         }
         evaluateStateDetectionRules()
 
-        previous = current.clone()
+        if (stats.lecturersDied >= 1) {
+            Sound.getInstance().play(Sound.SoundFile.ROBLOX_DEATH_SOUND)
+        }
 
-        return StatsCounter(0f, 0) // TODO: Update stats counter in step
+        previous = current.clone()
+        return stats
     }
 
     private fun evaluateStateDetectionRules() {
@@ -144,7 +146,7 @@ class Engine private constructor() {
         }
     }
 
-    private fun fight(cell: Cell, position: GridPosition, newPosition: GridPosition): StatsCounter {
+    private fun evaluateFightSystem(cell: Cell, position: GridPosition, newPosition: GridPosition): StatsCounter {
         cell.strength?.let { strength ->
             val sameCells = cell.countCells(previous, position, strength.radius, cell::class)
             val friendlyCells = cell.countCells(previous, position, strength.radius, strength.friendlyCell)
@@ -156,8 +158,7 @@ class Engine private constructor() {
                 ) { cell, _ -> cell.fightable } - (sameCells + friendlyCells)
             val difference = enemyCells - (sameCells + friendlyCells)
             if (difference > strength.treshold) {
-                killCellAt(position, newPosition)
-                return StatsCounter(lecturersDied = 1)
+                return killCellAt(position, newPosition)
             }
         }
         return StatsCounter()
