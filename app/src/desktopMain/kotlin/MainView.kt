@@ -14,7 +14,8 @@ fun MainView() {
         route = newRoute
         state = newState
     }
-    Box(Modifier.fillMaxSize()) {
+
+    Box(modifier = Modifier.fillMaxSize()) {
         when (route) {
             NavController.Route.START_SCREEN -> {
                 StartView(routeCallback)

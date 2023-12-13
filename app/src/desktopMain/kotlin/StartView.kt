@@ -22,25 +22,29 @@ import kotlin.system.exitProcess
 
 @Composable
 fun StartView(routeProvider: RouteCallback) {
-
-    Surface(Modifier.fillMaxSize()) {
+    Surface(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = BitmapPainter(
                 loadImageBitmap(
-                    File("src/desktopMain/kotlin/lastprofstanding/res/images/title_background.png").inputStream()
+                    File("src/desktopMain/kotlin/lastprofstanding/res/images/title_background.png")
+                        .inputStream()
                 )
             ),
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.blur(15.dp, 15.dp).alpha(0.75f).offset(0.dp, 100.dp)
+            modifier = Modifier
+                .blur(15.dp, 15.dp)
+                .alpha(0.75f)
+                .offset(0.dp, 100.dp)
         )
 
         Box {
-            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text("Last Prof. Standing", fontSize = 3.em, fontWeight = FontWeight.Bold)
-                Button(onClick = {
-                    routeProvider.invoke(NavController.Route.GAME_SCREEN, null)
-                }) {
+                Button(onClick = { routeProvider.invoke(NavController.Route.GAME_SCREEN, null) }) {
                     Text("Start")
                 }
                 Button(onClick = {
