@@ -1,16 +1,7 @@
 package lastprofstanding.engine.grid
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.loadImageBitmap
-import androidx.compose.ui.unit.dp
 import lastprofstanding.engine.Ability
 import lastprofstanding.engine.MovementDirection
 import lastprofstanding.engine.Strength
@@ -26,8 +17,8 @@ abstract class Cell(
     val lifetime: Int?,
     val weakness: Weakness<*>?,
     val strength: Strength<*>?,
-    var spawnRate: Float?
-
+    var spawnRate: Float?,
+    val fightable: Boolean
 ) {
     open val textRepresentation = "Default"
 
@@ -36,6 +27,9 @@ abstract class Cell(
     var activeAbility: Ability? = null
 
     companion object {
+        // So every cell type (not cell!) only needs to open its file once
+        // Otherwise, it's only a question of time (& system resources) until the UI gets blocked
+        private var imageBitmapCache: MutableMap<KClass<out Cell>, ImageBitmap> = mutableMapOf()
         /**
          * Calculate a concrete step value (integer) from a continuous float value.
          * Returns the integer value of the float value. If the float value is not an integer, a random function will determine with the probability 0<p<1 whether the cell will make one further step.
@@ -53,47 +47,56 @@ abstract class Cell(
         }
     }
 
-    open fun getFile(): File? {
+    open fun getFile(): File {
         return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/air.png")
     }
 
-    @Composable
-    open fun draw(scale: Int) {
-        getFile()?.let { file ->
-            loadImageBitmap(file.inputStream())
-        }?.let {
-            BitmapPainter(image = it)
-        }?.let {
-            Image(
-                painter = it,
-                contentDescription = null,
-                modifier = Modifier.size(scale.dp)
-            )
-        }
-    }
+    // TODO Remove
+    // @Composable
+    // open fun draw(scale: Int) {
+    //     getFile()?.let { file ->
+    //         loadImageBitmap(file.inputStream())
+    //     }?.let {
+    //         BitmapPainter(image = it)
+    //     }?.let {
+    //         Box(
+    //             // modifier = Modifier.zIndex(zIndex.toFloat())
+    //         ) {
+    //             Image(
+    //                 painter = it,
+    //                 contentDescription = null,
+    //                 modifier = Modifier
+    //                     .size(scale.dp)
+    //             )
+    //         }
+    //     }
+    // }
 
-    @Composable
-    open fun drawInEditMode(scale: Int) {
-        getFile()?.let { file ->
-            loadImageBitmap(file.inputStream())
-        }?.let {
-            BitmapPainter(image = it)
-        }?.let {
-            val editColor = if (this.passable) {
-                Color.Green
-            } else {
-                Color.Red
-            }
-            Image(
-                painter = it,
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(editColor, blendMode = BlendMode.Darken),
-                modifier = Modifier
-                    .size(scale.dp)
-                    .graphicsLayer { this.alpha = 0.785f }
-            )
-        }
-    }
+    // TODO Remove
+    // @Composable
+    // open fun drawInEditMode(scale: Int) {
+    //     getFile()?.let { file ->
+    //         loadImageBitmap(file.inputStream())
+    //     }?.let {
+    //         BitmapPainter(image = it)
+    //     }?.let {
+    //         val editColor = if (this.passable) {
+    //             Color.Green
+    //         } else {
+    //             Color.Red
+    //         }
+    //         Image(
+    //             painter = it,
+    //             contentDescription = null,
+    //             colorFilter = ColorFilter.tint(editColor, blendMode = BlendMode.Darken),
+    //             modifier = Modifier
+    //                 .size(scale.dp)
+    //                 .graphicsLayer { this.alpha = 0.785f }
+    //                 // .zIndex(zIndex.toFloat())
+    //         )
+    //     }
+    // }
+
 
     fun set(
         stepsSurvived: Int,
@@ -110,6 +113,16 @@ abstract class Cell(
     }
 
     abstract fun clone(): Cell
+
+    fun getImageBitmap(): ImageBitmap {
+        imageBitmapCache[this::class]?.let {
+            return it
+        }
+        val stream = getFile().inputStream()
+        val bitmap = loadImageBitmap(stream)
+        imageBitmapCache[this::class] = bitmap
+        return bitmap
+    }
 
     open fun checkIfDying(grid: Grid, position: GridPosition): Boolean {
         return false
@@ -130,12 +143,21 @@ abstract class Cell(
 
     open fun testForSpawningNewCells(grid: Grid, position: GridPosition): Boolean {
         return spawnRate?.let {
-            stepsSurvived % getConcreteStepFromContinuousValue(it) == 0
+            val spawnRate = getConcreteStepFromContinuousValue(it)
+            if (spawnRate == 0) {
+                return true
+            }
+            stepsSurvived % spawnRate == 0
         } ?: false
     }
 
 
-    private fun checkMovementDirection(grid: Grid, position: GridPosition, direction: MovementDirection, distance: Int): Boolean {
+    private fun checkMovementDirection(
+        grid: Grid,
+        position: GridPosition,
+        direction: MovementDirection,
+        distance: Int
+    ): Boolean {
         return grid.get(position + direction.getPositionDelta() * distance)?.passable ?: false
     }
 
@@ -147,7 +169,7 @@ abstract class Cell(
             val randomIndex = (0 until directionsToTry.size).random()
             val directionToTry = directionsToTry[randomIndex]
 
-            if (checkMovementDirection(grid, position, directionToTry,distance)) {
+            if (checkMovementDirection(grid, position, directionToTry, distance)) {
                 return directionToTry
             } else {
                 directionsToTry.removeAt(randomIndex)
@@ -161,7 +183,7 @@ abstract class Cell(
     fun getMovementData(grid: Grid, position: GridPosition): GridPosition {
 
         val distance = getConcreteStepFromContinuousValue(movementSpeed)
-        val movementDirection = getMovementDirection(grid, position,distance)
+        val movementDirection = getMovementDirection(grid, position, distance)
         currentMovement = movementDirection
         return position + movementDirection.getPositionDelta() * distance
     }
