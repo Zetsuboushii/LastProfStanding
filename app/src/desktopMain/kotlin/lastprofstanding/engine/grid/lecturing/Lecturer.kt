@@ -5,6 +5,7 @@ import lastprofstanding.engine.grid.Cell
 import lastprofstanding.engine.grid.EmptyCell
 import lastprofstanding.engine.grid.Weakness
 import java.io.File
+import kotlin.reflect.KClass
 
 abstract class Lecturer(
         val name: String,
@@ -15,8 +16,8 @@ abstract class Lecturer(
 
 ) : Cell(false, movementSpeed, null, weakness, strength, spawnRate, true) {
         companion object {
-                fun getFileForLecturer(): File {
-                        return when (this::class) {
+                fun getFileForLecturer(lecturer: KClass<out Lecturer>): File {
+                        return when (lecturer) {
                                 Kruse::class -> Kruse().getFile()
                                 Stroetmann::class -> Stroetmann().getFile()
                                 Hofmann::class -> Hofmann().getFile()

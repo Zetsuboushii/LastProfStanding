@@ -27,21 +27,22 @@ fun EndView(routeCallback: RouteCallback, state: EngineState?) {
         duration = Duration.ofMillis(stats.timeSpentPlaying.toLong())
     }
     val lecturerCountMap = state?.spriteLayer?.getLecturerCountMap() ?: mapOf()
+    val winner = lecturerCountMap.getWinningClass()
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
         ) {
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 if (lecturerCountMap.hasOneWinner()) {
                     Text(
-                        text = "${lecturerCountMap.getWinningClass()?.simpleName} won!",
+                        text = "${winner?.simpleName} won!",
                         fontSize = 3.em,
                         fontWeight = FontWeight.Bold
                     )
                     Image(
-                        painter = BitmapPainter(getImage(Lecturer.getFileForLecturer())),
+                        painter = BitmapPainter(getImage(Lecturer.getFileForLecturer(winner ?: Lecturer::class))),
                         contentDescription = null
                     )
                 } else {
