@@ -1,19 +1,18 @@
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import lastprofstanding.engine.EngineState
 import lastprofstanding.engine.grid.lecturing.Lecturer
@@ -32,34 +31,49 @@ fun EndView(routeCallback: RouteCallback, state: EngineState?) {
     } else {
         null
     }
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Column {
-            if (oneWinner) {
-                Text("${winningClass?.simpleName} won!")
-                Image(
-                    painter = BitmapPainter(loadImageBitmap(Lecturer.getFileForLecturer().inputStream())),
-                    contentDescription = null
-                )
-            } else {
-                Text("Draw!")
+
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column {
+                if (oneWinner) {
+                    Text(text = "${winningClass?.simpleName} won!", fontSize = 3.em, fontWeight = FontWeight.Bold)
+                    Image(
+                        painter = BitmapPainter(loadImageBitmap(Lecturer.getFileForLecturer().inputStream())),
+                        contentDescription = null
+                    )
+                } else {
+                    Text(text = "Draw!", fontSize = 3.em, fontWeight = FontWeight.Bold)
+                }
             }
-        }
-        Column(Modifier.background(Color.Cyan).padding(10.dp)) {
-            Row {
-                Text("Time spent playing:")
-                Text("${duration?.toMinutesPart()}:${duration?.toSecondsPart()}")
+
+            Spacer(modifier = Modifier.size(30.dp))
+
+            Column(modifier = Modifier.padding(10.dp)) {
+                Row(horizontalArrangement = Arrangement.Center) {
+                    Text(text = "Stats", fontWeight = FontWeight.Bold)
+                }
+                Row {
+                    Text(text = "Time spent playing:")
+                    Text(text = "${duration?.toMinutesPart()}:${duration?.toSecondsPart()}")
+                }
+                Row {
+                    Text(text = "Lecturers died:")
+                    Text(text = state?.stats?.lecturersDied.toString())
+                }
             }
-            Row {
-                Text("Lecturers died:")
-                Text(state?.stats?.lecturersDied.toString())
+
+            Spacer(modifier = Modifier.size(30.dp))
+
+            Button(
+                onClick = {
+                    routeCallback.invoke(NavController.Route.START_SCREEN, null)
+                }) {
+                putIcon(iconName = "arrow_back")
+                Text(text = "Back to Start", style = TextStyle(fontSize = 20.sp))
             }
-        }
-        Button(
-            onClick = {
-                routeCallback.invoke(NavController.Route.START_SCREEN, null)
-            }) {
-            putIcon("arrow_back")
-            Text("Back to Start", style = TextStyle(fontSize = 20.sp))
         }
     }
 }

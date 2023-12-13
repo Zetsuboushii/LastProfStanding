@@ -60,8 +60,8 @@ fun SimulationView(routeProvider: RouteCallback) {
     val abilities = listOf(
         Pair(AbilityType.SPEED_UP, "Speed Up"),
         Pair(AbilityType.SPEED_DOWN, "Speed Down"),
-        Pair(AbilityType.DECREASE_SPAWN_RATE, "Decrease Spawn Rate"),
         Pair(AbilityType.INCREASE_SPAWN_RATE, "Increase Spawn Rate"),
+        Pair(AbilityType.DECREASE_SPAWN_RATE, "Decrease Spawn Rate"),
     )
 
     Row {
@@ -69,7 +69,7 @@ fun SimulationView(routeProvider: RouteCallback) {
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxHeight()
-                .width(325.dp)
+                .width(400.dp)
                 .background(Color.Gray)
         ) {
             Column(
@@ -87,19 +87,12 @@ fun SimulationView(routeProvider: RouteCallback) {
                             .wrapContentWidth()
                     ) {
                         item {
-                            Text("Select a Lecturer", style = TextStyle(fontWeight = FontWeight.Bold))
+                            Text(text = "Select a Lecturer", fontWeight = FontWeight.Bold)
                         }
+
                         items(lecturers) {
                             Button(
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = if (lecturerSelectButtonState) {
-                                        Color.DarkGray
-                                    } else {
-                                        Color.LightGray
-                                    }
-                                ),
-                                modifier = Modifier
-                                    .width(250.dp),
+                                enabled = lecturerSelected == null || lecturerSelected == it.first,
                                 onClick = {
                                     lecturerSelectButtonState = !lecturerSelectButtonState
                                     lecturerSelected = if (lecturerSelected == null) {
@@ -108,7 +101,15 @@ fun SimulationView(routeProvider: RouteCallback) {
                                         null
                                     }
                                 },
-                                enabled = lecturerSelected == null || lecturerSelected == it.first
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = if (lecturerSelectButtonState) {
+                                        Color.DarkGray
+                                    } else {
+                                        Color.LightGray
+                                    }
+                                ),
+                                modifier = Modifier
+                                    .width(250.dp)
                             ) {
                                 Row {
                                     Image(
@@ -130,10 +131,8 @@ fun SimulationView(routeProvider: RouteCallback) {
                                         modifier = Modifier.size(50.dp)
                                     )
                                 }
-                                Row(
-                                    modifier = Modifier.padding(start = 10.dp)
-                                ) {
-                                    Text(it.first.name, textAlign = TextAlign.Center)
+                                Row(modifier = Modifier.padding(start = 10.dp)) {
+                                    Text(text = it.first.name, textAlign = TextAlign.Center)
                                 }
                             }
                             Spacer(modifier = Modifier.size(8.dp))
@@ -152,19 +151,11 @@ fun SimulationView(routeProvider: RouteCallback) {
                             .wrapContentWidth()
                     ) {
                         item {
-                            Text("Apply an Ability", style = TextStyle(fontWeight = FontWeight.Bold))
+                            Text(text = "Apply an Ability", style = TextStyle(fontWeight = FontWeight.Bold))
                         }
                         items(abilities) {
                             OutlinedButton(
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = if (abilitySelectButtonState && paused) {
-                                        Color.DarkGray
-                                    } else {
-                                        Color.LightGray
-                                    }
-                                ),
-                                modifier = Modifier
-                                    .width(250.dp),
+                                enabled = (abilitySelected == null || abilitySelected == it.first) && paused,
                                 onClick = {
                                     abilitySelectButtonState = !abilitySelectButtonState
                                     abilitySelected = if (abilitySelected == null) {
@@ -173,12 +164,18 @@ fun SimulationView(routeProvider: RouteCallback) {
                                         null
                                     }
                                 },
-                                enabled = (abilitySelected == null || abilitySelected == it.first) && paused
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = if (abilitySelectButtonState && paused) {
+                                        Color.DarkGray
+                                    } else {
+                                        Color.LightGray
+                                    }
+                                ),
+                                modifier = Modifier
+                                    .width(250.dp)
                             ) {
-                                Row(
-                                    modifier = Modifier.padding(start = 10.dp)
-                                ) {
-                                    Text(it.second, textAlign = TextAlign.Center)
+                                Row(modifier = Modifier.padding(start = 10.dp)) {
+                                    Text(text = it.second, textAlign = TextAlign.Center)
                                 }
                             }
                             Spacer(modifier = Modifier.size(8.dp))
@@ -190,13 +187,13 @@ fun SimulationView(routeProvider: RouteCallback) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp)
+                    .padding(5.dp)
                     .wrapContentWidth()
                     .height(40.dp)
                     .weight(1f, false)
             ) {
                 val buttonModifier = Modifier
-                    .padding(start = 10.dp)
+                    .padding(5.dp)
                     .width(40.dp)
 
                 Button(
@@ -219,7 +216,7 @@ fun SimulationView(routeProvider: RouteCallback) {
                         }
                     },
                     contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier.width(40.dp)
+                    modifier = buttonModifier
                 ) { if (paused) putIcon("play") else putIcon("pause") }
 
                 if (!paused) {
@@ -327,6 +324,8 @@ fun SimulationView(routeProvider: RouteCallback) {
         val coroutineScope = rememberCoroutineScope()
 
         Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(verticalScrollState)
@@ -346,9 +345,7 @@ fun SimulationView(routeProvider: RouteCallback) {
                             verticalScrollState.scrollBy(-delta)
                         }
                     },
-                ),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                )
         ) {
             /*
              TILE AND SPRITE RENDERING
@@ -376,7 +373,7 @@ fun SimulationView(routeProvider: RouteCallback) {
                             Color.Transparent
                         }
                         val editColorFilter = if (editing) {
-                            ColorFilter.tint(editColor, blendMode = BlendMode.Darken)
+                            ColorFilter.tint(color = editColor, blendMode = BlendMode.Darken)
                         } else {
                             null
                         }
@@ -435,9 +432,6 @@ fun SimulationView(routeProvider: RouteCallback) {
 
                             if (paused && !editing) {
                                 Button(
-                                    modifier = Modifier
-                                        .size((16 * scale).dp),
-                                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                                     onClick = {
                                         if (abilitySelected != null && engineState.spriteLayer.get(
                                                 GridPosition(
@@ -447,7 +441,10 @@ fun SimulationView(routeProvider: RouteCallback) {
                                         ) {
                                             engine.applyAbility(abilitySelected!!, GridPosition(column, row))
                                         }
-                                    }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                                    modifier = Modifier
+                                        .size((16 * scale).dp)
                                 ) { }
                             }
                         }
