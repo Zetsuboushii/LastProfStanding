@@ -1,3 +1,5 @@
+package lastprofstanding.ui
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -24,7 +26,8 @@ import lastprofstanding.engine.grid.Cell
 import lastprofstanding.engine.grid.Grid
 import lastprofstanding.engine.grid.GridPosition
 import lastprofstanding.engine.grid.lecturing.*
-import java.io.File
+import lastprofstanding.forceResourceStream
+import java.io.InputStream
 
 @Composable
 fun SimulationView(routeProvider: RouteCallback) {
@@ -448,8 +451,8 @@ fun putIcon(iconName: String) {
     Icon(
         painter = BitmapPainter(
             getImage(
-                File(
-                    "src/desktopMain/kotlin/lastprofstanding/res/icons/${iconName}.png"
+                forceResourceStream(
+                    "icons/${iconName}.png"
                 )
             )
         ),
@@ -457,13 +460,12 @@ fun putIcon(iconName: String) {
     )
 }
 
-fun getImage(file: File): ImageBitmap {
-    val stream = file.inputStream()
+fun getImage(stream: InputStream): ImageBitmap {
     val bitmap = loadImageBitmap(stream)
     stream.close()
     return bitmap
 }
 
 fun getImage(cell: Cell): ImageBitmap {
-    return getImage(cell.getFile())
+    return getImage(cell.getInputStream())
 }

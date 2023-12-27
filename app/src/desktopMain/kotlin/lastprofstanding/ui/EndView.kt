@@ -1,4 +1,4 @@
-
+package lastprofstanding.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -42,7 +42,13 @@ fun EndView(routeCallback: RouteCallback, state: EngineState?) {
                         fontWeight = FontWeight.Bold
                     )
                     Image(
-                        painter = BitmapPainter(getImage(Lecturer.getFileForLecturer(winner ?: Lecturer::class))),
+                        painter = BitmapPainter(
+                            getImage(
+                                Lecturer.getInputStreamForLecturer(
+                                    winner ?: Lecturer::class
+                                )
+                            )
+                        ),
                         contentDescription = null
                     )
                 } else {

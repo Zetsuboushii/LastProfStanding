@@ -1,8 +1,8 @@
 package lastprofstanding.engine
 
-import NavController
-import RouteCallback
 import lastprofstanding.engine.grid.lecturing.Stroetmann
+import lastprofstanding.ui.NavController
+import lastprofstanding.ui.RouteCallback
 
 abstract class StateDetectionRule {
     companion object {

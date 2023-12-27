@@ -2,11 +2,12 @@ package lastprofstanding.engine.grid.lecturing
 
 import lastprofstanding.engine.Strength
 import lastprofstanding.engine.grid.Cell
-import java.io.File
+import lastprofstanding.forceResourceStream
+import java.io.InputStream
 
 class HofmannMinion : Cell(false, 0.5f, 20, null, Strength(friendlyCell = Hofmann::class), null, true) {
-    override fun getFile(): File {
-        return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/hofmann_minion.png")
+    override fun getInputStream(): InputStream {
+        return forceResourceStream("textures/sprites/hofmann_minion.png")
     }
 
     override fun clone(): Cell {

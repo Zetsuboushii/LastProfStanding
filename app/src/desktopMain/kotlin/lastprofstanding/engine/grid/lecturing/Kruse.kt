@@ -2,7 +2,8 @@ package lastprofstanding.engine.grid.lecturing
 
 import lastprofstanding.engine.Strength
 import lastprofstanding.engine.grid.*
-import java.io.File
+import lastprofstanding.forceResourceStream
+import java.io.InputStream
 
 class Kruse :
     Lecturer("Kruse", 1.3f, Weakness(HofmannMinion::class, 5, 3), Strength(friendlyCell = KruseMinion::class), 4f) {
@@ -20,8 +21,8 @@ class Kruse :
         }
     }
 
-    override fun getFile(): File {
-        return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/kruse.png")
+    override fun getInputStream(): InputStream {
+        return forceResourceStream("textures/sprites/kruse.png")
     }
 
     override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern? {

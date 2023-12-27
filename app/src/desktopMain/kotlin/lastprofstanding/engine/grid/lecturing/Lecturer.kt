@@ -4,7 +4,7 @@ import lastprofstanding.engine.Strength
 import lastprofstanding.engine.grid.Cell
 import lastprofstanding.engine.grid.EmptyCell
 import lastprofstanding.engine.grid.Weakness
-import java.io.File
+import java.io.InputStream
 import kotlin.reflect.KClass
 
 abstract class Lecturer(
@@ -16,12 +16,12 @@ abstract class Lecturer(
 
 ) : Cell(false, movementSpeed, null, weakness, strength, spawnRate, true) {
         companion object {
-                fun getFileForLecturer(lecturer: KClass<out Lecturer>): File {
+            fun getInputStreamForLecturer(lecturer: KClass<out Lecturer>): InputStream {
                         return when (lecturer) {
-                                Kruse::class -> Kruse().getFile()
-                                Stroetmann::class -> Stroetmann().getFile()
-                                Hofmann::class -> Hofmann().getFile()
-                                else -> EmptyCell().getFile()
+                            Kruse::class -> Kruse().getInputStream()
+                            Stroetmann::class -> Stroetmann().getInputStream()
+                            Hofmann::class -> Hofmann().getInputStream()
+                            else -> EmptyCell().getInputStream()
                         }
                 }
         }
