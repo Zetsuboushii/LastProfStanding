@@ -1,3 +1,5 @@
+package lastprofstanding.ui
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import java.io.File
+import lastprofstanding.forceResourceStream
 import kotlin.system.exitProcess
 
 @Composable
@@ -25,7 +27,7 @@ fun StartView(routeProvider: RouteCallback) {
         Image(
             painter = BitmapPainter(
                 getImage(
-                    File("src/desktopMain/kotlin/lastprofstanding/res/images/title_background.png")
+                    forceResourceStream("images/title_background.png")
                 )
             ),
             contentDescription = null,

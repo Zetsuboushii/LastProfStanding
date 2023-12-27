@@ -1,3 +1,5 @@
+package lastprofstanding.ui
+
 data class NavController(
     var activeRoute: Route = Route.START_SCREEN
 ) {

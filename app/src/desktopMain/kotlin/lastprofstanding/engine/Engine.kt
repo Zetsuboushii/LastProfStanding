@@ -1,8 +1,8 @@
 package lastprofstanding.engine
 
-import RouteCallback
 import lastprofstanding.engine.grid.*
 import lastprofstanding.engine.grid.lecturing.Lecturer
+import lastprofstanding.ui.RouteCallback
 import kotlin.math.max
 import kotlin.time.measureTime
 

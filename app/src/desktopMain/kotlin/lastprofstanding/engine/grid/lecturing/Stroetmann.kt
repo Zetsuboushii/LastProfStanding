@@ -2,7 +2,8 @@ package lastprofstanding.engine.grid.lecturing
 
 import lastprofstanding.engine.Strength
 import lastprofstanding.engine.grid.*
-import java.io.File
+import lastprofstanding.forceResourceStream
+import java.io.InputStream
 
 class Stroetmann : Lecturer(
     "Stroetmann",
@@ -25,11 +26,11 @@ class Stroetmann : Lecturer(
         }
     }
 
-    override fun getFile(): File {
-        return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/stroetmann.png")
+    override fun getInputStream(): InputStream {
+        return forceResourceStream("textures/sprites/stroetmann.png")
     }
 
-    override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern? {
+    override fun getSpawnPattern(grid: Grid, position: GridPosition): SpawnPattern {
         return createSpawnPattern(
             position,
             Pair(GridPosition(-1, 1), StroetmannMinion()),

@@ -1,6 +1,7 @@
 package lastprofstanding.engine
 
-import java.io.File
+import lastprofstanding.forceResourceStream
+import java.io.BufferedInputStream
 import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.Clip
 
@@ -12,7 +13,7 @@ class Sound {
         }
 
         fun getFileName(): String {
-            val root = "src/desktopMain/kotlin/lastprofstanding/res/audio/"
+            val root = "audio/"
             return root + filename
         }
     }
@@ -30,7 +31,8 @@ class Sound {
 
     fun play(sound: SoundFile) {
         try {
-            val inputStream = AudioSystem.getAudioInputStream(File(sound.getFileName()))
+            val bufferedStream = BufferedInputStream(forceResourceStream(sound.getFileName()))
+            val inputStream = AudioSystem.getAudioInputStream(bufferedStream)
             val clip = AudioSystem.getClip()
             clip.open(inputStream)
             clip.start()
@@ -39,6 +41,7 @@ class Sound {
             }
         } catch (exception: Exception) {
             print("Sound error: $exception - ${exception.localizedMessage}")
+            print(exception.stackTraceToString())
         }
     }
 

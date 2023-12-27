@@ -1,6 +1,7 @@
 package lastprofstanding.engine.grid
 
-import java.io.File
+import lastprofstanding.forceResourceStream
+import java.io.InputStream
 
 class Tile(var tileType: TileType) : Cell(true, 0f, null, null, null, null, false) {
     override val textRepresentation = "T"
@@ -9,9 +10,9 @@ class Tile(var tileType: TileType) : Cell(true, 0f, null, null, null, null, fals
         return Tile(tileType).apply { set(stepsSurvived, currentMovement, movementSpeed, spawnRate, activeAbility) }
     }
 
-    override fun getFile(): File {
-        return File(
-            "src/desktopMain/kotlin/lastprofstanding/res/textures/tiles/" +
+    override fun getInputStream(): InputStream {
+        return forceResourceStream(
+            "textures/tiles/" +
                     when (tileType) {
                         TileType.FLOOR -> "floor"
                         TileType.WALL_BOTTOM -> "wall_bottom"

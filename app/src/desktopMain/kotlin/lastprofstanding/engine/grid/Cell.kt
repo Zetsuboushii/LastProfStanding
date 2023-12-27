@@ -5,7 +5,8 @@ import androidx.compose.ui.res.loadImageBitmap
 import lastprofstanding.engine.Ability
 import lastprofstanding.engine.MovementDirection
 import lastprofstanding.engine.Strength
-import java.io.File
+import lastprofstanding.forceResourceStream
+import java.io.InputStream
 import kotlin.reflect.KClass
 
 abstract class Cell(
@@ -47,8 +48,8 @@ abstract class Cell(
         }
     }
 
-    open fun getFile(): File {
-        return File("src/desktopMain/kotlin/lastprofstanding/res/textures/sprites/air.png")
+    open fun getInputStream(): InputStream {
+        return forceResourceStream("textures/sprites/air.png")
     }
 
     // TODO Remove
@@ -118,7 +119,7 @@ abstract class Cell(
         imageBitmapCache[this::class]?.let {
             return it
         }
-        val stream = getFile().inputStream()
+        val stream = getInputStream()
         val bitmap = loadImageBitmap(stream)
         imageBitmapCache[this::class] = bitmap
         return bitmap
