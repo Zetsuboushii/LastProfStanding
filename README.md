@@ -1,4 +1,4 @@
-<p align="center"><br><br><img src="" width="300" height="300" /></p>
+<p align="center"><br><br><img src="app/src/desktopMain/resources/textures/sprites/kruse.png" width="300" height="300" /></p>
 
 <h3 align="center">Last Prof. Standing</h3>
 <p align="center"><strong><code>LastProfStanding</code></strong></p>
